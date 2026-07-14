@@ -1,0 +1,101 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        Int        @id @default(autoincrement())
+  email     String     @unique
+  password  String // hashed
+  name      String
+  role      String // "OWNER" or "RECEPTION" or "USER"
+  status    String     @default("ACTIVE") // "ACTIVE" or "SUSPENDED"
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  auditLogs AuditLog[]
+  bookings  Booking[]
+}
+
+model RoomType {
+  id          String    @id // e.g. "STANDARD_QUEEN", "SUPERIOR_KING", etc.
+  name        String
+  rate        Float // ETB per night
+  bedConfig   String
+  amenities   String    // JSON string or comma-separated list
+  description String    
+  rooms       Room[]
+  bookings    Booking[]
+}
+
+model Room {
+  roomNumber String    @id // e.g. "101", "102"
+  roomTypeId String
+  roomType   RoomType  @relation(fields: [roomTypeId], references: [id], onDelete: Cascade)
+  floor      String // e.g. "G+1"
+  status     String    @default("AVAILABLE") // "AVAILABLE" or "MAINTENANCE"
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  bookings   Booking[]
+}
+
+model Booking {
+  id             String     @id // Reference code e.g. "DP-10492"
+  fullName       String
+  purpose        String
+  address        String
+  nationalId     String
+  roomNumber     String?
+  room           Room?      @relation(fields: [roomNumber], references: [roomNumber], onDelete: SetNull)
+  roomTypeId     String
+  roomType       RoomType   @relation(fields: [roomTypeId], references: [id], onDelete: Cascade)
+  checkIn        DateTime
+  checkOut       DateTime
+  phone          String
+  status         String     @default("BOOKED") // "BOOKED", "CHECKED_IN", "CHECKED_OUT", "CANCELLED"
+  paymentStatus  String     @default("PENDING") // "PENDING", "RECEIVED"
+  totalPrice     Float
+  paymentMessage String? // Copy-pasted bank transfer message (CBE / Telebirr)
+  userId         Int?
+  user           User?      @relation(fields: [userId], references: [id], onDelete: SetNull)
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+  auditLogs      AuditLog[]
+}
+
+model AuditLog {
+  id        Int      @id @default(autoincrement())
+  bookingId String?
+  booking   Booking? @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  action    String // e.g., "PAYMENT_STATUS_CHANGE", "CHECK_IN", etc.
+  details   String
+  timestamp DateTime @default(now())
+}
+
+model Enquiry {
+  id                  Int      @id @default(autoincrement())
+  name                String
+  organization        String
+  eventType           String
+  date                DateTime
+  estimatedAttendance Int
+  cateringRequirement Boolean  @default(false)
+  message             String
+  status              String   @default("PENDING") // "PENDING", "RESPONDED"
+  createdAt           DateTime @default(now())
+}
+
+model GalleryImage {
+  id          Int      @id @default(autoincrement())
+  url         String
+  category    String   // "lobby" | "rooms" | "dining" | "meetings"
+  title       String
+  description String   
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

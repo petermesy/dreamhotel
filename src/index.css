@@ -1,0 +1,57 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Montserrat:wght@500;600&display=swap');
+@import "tailwindcss";
+
+html {
+  font-size: 17.5px;
+}
+
+:root {
+  --font-serif: "Playfair Display", Georgia, serif;
+  --font-sans: "Lato", system-ui, -apple-system, sans-serif;
+  --font-accent: "Montserrat", sans-serif;
+}
+
+@theme {
+  --font-sans: var(--font-sans);
+  --font-serif: var(--font-serif);
+  --font-accent: var(--font-accent);
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  /* Overriding indigo with the hotel's premium brand gold/bronze color scheme */
+  --color-indigo-50: #fdfbf7;  /* very soft elegant gold/cream */
+  --color-indigo-100: #f6ecd4; /* sand-cream */
+  --color-indigo-200: #edd8a9; /* soft gold */
+  --color-indigo-300: #e0be7d;
+  --color-indigo-400: #d3a451;
+  --color-indigo-500: #c5a85c; /* premium brand gold (matches logo) */
+  --color-indigo-600: #c5a85c; /* primary brand gold used for buttons, active items */
+  --color-indigo-700: #aa8e45; /* deep gold */
+  --color-indigo-800: #8d732e; /* dark gold */
+  --color-indigo-900: #0b1a30; /* luxury deep corporate navy for contrasting headings */
+
+  /* Overriding amber/orange/accent to align with the premium brand gold */
+  --color-amber-50: #fdfbf7;
+  --color-amber-100: #f6ecd4;
+  --color-amber-500: #c5a85c;
+  --color-amber-600: #aa8e45; /* accent gold */
+  --color-amber-700: #8d732e;
+  --color-amber-800: #6a531b;
+
+  /* Overriding slate/gray with premium dark navy and warm sandstone tones */
+  --color-slate-50: #fdfdfc;  /* pristine bright background */
+  --color-slate-100: #f5f4f0;
+  --color-slate-200: #e8e6df; /* warm slate borders */
+  --color-slate-300: #d7d4ca;
+  --color-slate-400: #b8b3a5;
+  --color-slate-500: #8f897b; /* muted text */
+  --color-slate-600: #6e685a;
+  --color-slate-750: #0b1a30; /* primary dark text mapped to luxury corporate navy */
+  --color-slate-800: #0b1a30;
+  --color-slate-900: #081324; /* deep navy midnight */
+  --color-slate-950: #050d1a; /* ultra-dark brand navy black */
+
+  /* Apply custom shadows, borders, etc */
+  --shadow-sm: 0 1px 2px 0 rgba(122, 141, 122, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(122, 141, 122, 0.08), 0 2px 4px -1px rgba(122, 141, 122, 0.04);
+}
+
