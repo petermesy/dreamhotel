@@ -2,10 +2,10 @@ import { GalleryCategoryOption, GalleryImage } from "./types";
 
 export const galleryCategoryOptions: GalleryCategoryOption[] = [
   { id: "all", label: "All Photos" },
-  { id: "lobby", label: "Facade and Lobby" },
-  { id: "rooms", label: "Accommodation" },
-  { id: "dining", label: "Dining" },
-  { id: "meetings", label: "Meetings" },
+  { id: "lobby", label: "Lobby & Exterior" },
+  { id: "rooms", label: "Boutique Guest Rooms" },
+  { id: "dining", label: "The Bistro Dining & Bar" },
+  { id: "meetings", label: "Sawla Conference Halls" },
 ];
 
 export const galleryImages: GalleryImage[] = [
