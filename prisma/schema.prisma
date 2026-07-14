@@ -25,8 +25,8 @@ model RoomType {
   name        String
   rate        Float // ETB per night
   bedConfig   String
-  amenities   String    // JSON string or comma-separated list
-  description String    
+  amenities   String    @db.Text // JSON string or comma-separated list
+  description String    @db.Text
   rooms       Room[]
   bookings    Booking[]
 }

@@ -33,6 +33,42 @@ npm run dev
 
 The app is available at `http://localhost:3000`.
 
+### Database setup
+
+This project uses Prisma with a database configured through `prisma/schema.prisma`.
+
+#### 1. Configure your database URL
+
+Create or update `.env` with a valid Prisma connection string, for example:
+
+```env
+DATABASE_URL="mysql://root:your_password@127.0.0.1:3306/dream_pension"
+```
+
+#### 2. Apply the schema
+
+```bash
+npx prisma db push
+```
+
+Or, if you want to create a migration history:
+
+```bash
+npx prisma migrate dev --name init
+```
+
+#### 3. Seed demo data
+
+```bash
+npx ts-node prisma/seed.ts
+```
+
+If you want to reset and reseed the database from scratch:
+
+```bash
+npx prisma migrate reset --force
+```
+
 ---
 
 ## 📦 Production Build
