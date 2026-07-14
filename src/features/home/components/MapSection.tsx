@@ -22,15 +22,31 @@ export default function MapSection() {
                     <span className="text-[10px] font-mono text-slate-500 font-bold">4.9 (84 reviews)</span>
                   </div>
                 </div>
-                <a
-                  href="https://maps.app.goo.gl/dnSN2XocBmSF8Cp78"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="p-2 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 transition-colors cursor-pointer"
-                  title="Open in Google Maps"
-                >
-                  <MapPin className="w-4 h-4" />
-                </a>
+ <div className="space-y-4">
+  {/* Google Maps Embed */}
+  <div className="overflow-hidden rounded-2xl shadow-lg border border-slate-200">
+    <iframe
+      src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d937.7978810388715!2d36.8894886379811!3d6.303234058282574!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e1!3m2!1sen!2set!4v1784023310455!5m2!1sen!2set"
+      className="w-full h-80 md:h-96"
+      style={{ border: 0 }}
+      loading="lazy"
+      allowFullScreen
+      referrerPolicy="strict-origin-when-cross-origin"
+      title="Dream Hotel Location"
+    />
+  </div>
+
+  {/* Open in Google Maps */}
+  <a
+    href="https://maps.app.goo.gl/dnSN2XocBmSF8Cp78"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+  >
+    <MapPin className="w-4 h-4" />
+    Open in Google Maps
+  </a>
+</div>
               </div>
             </div>
             {/* Styled Vector Map Placeholder Background */}
