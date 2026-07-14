@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { ArrowLeft } from "lucide-react";
 import { Room } from "./types";
 import { ImageCarousel } from "./ImageCarousel";
@@ -17,6 +17,10 @@ export default function RoomDetailDashboard({
   onBack,
   onBookNow,
 }: RoomDetailDashboardProps) {
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
   const images = getRoomTypeImages(selectedRoom.id);
   const facilities = getDetailedFacilities(selectedRoom.amenities);
 

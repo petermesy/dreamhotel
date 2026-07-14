@@ -6,24 +6,27 @@ A full-stack guest house management application for guest registration, room boo
 
 ## 🛠️ Technology
 
-* Frontend: React + Vite
-* Backend: Express
-* Build: Vite + esbuild
+- Frontend: React + Vite
+- Backend: Express
+- Build: Vite + esbuild
 
 ---
 
 ## 🚀 Local Development
 
 ### Prerequisites
-* Node.js v18+
-* npm
+
+- Node.js v18+
+- npm
 
 ### Install
+
 ```bash
 npm install
 ```
 
 ### Run development server
+
 ```bash
 npm run dev
 ```
@@ -35,12 +38,16 @@ The app is available at `http://localhost:3000`.
 ## 📦 Production Build
 
 ### Build frontend only
+
 #### macOS / Linux
+
 ```bash
 npm install
 npx vite build
 ```
+
 #### Windows PowerShell
+
 ```powershell
 npm install
 npx vite build
@@ -49,41 +56,57 @@ npx vite build
 This outputs optimized frontend files to `dist/`.
 
 ### Serve frontend only (test)
+
 #### macOS / Linux
+
 ```bash
 npx serve -s dist -l 5173
 ```
+
 #### Windows PowerShell
+
 ```powershell
 npx serve -s dist -l 5173
 ```
 
 or:
+
 #### macOS / Linux
+
 ```bash
 npx http-server dist -p 5173
 ```
+
 #### Windows PowerShell
+
 ```powershell
 npx http-server dist -p 5173
 ```
 
 ### Build backend only
+
 #### macOS / Linux
+
 ```bash
 npx esbuild server.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/server.cjs
 ```
+
 #### Windows PowerShell
+
 ```powershell
 npx esbuild server.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/server.cjs
 ```
 
 ### Run production server
+
 #### macOS / Linux
+
 ```bash
 NODE_ENV=production PORT=3000 node dist/server.cjs
 ```
+
 #### Windows PowerShell
+
 ```powershell
 $env:NODE_ENV='production'; $env:PORT='3000'; node dist/server.cjs
 ```
@@ -117,6 +140,7 @@ server {
 ```
 
 Reload Nginx:
+
 ```bash
 sudo nginx -t
 sudo systemctl reload nginx || sudo nginx -s reload
@@ -126,7 +150,6 @@ sudo systemctl reload nginx || sudo nginx -s reload
 
 ## ⚠️ Notes
 
-* `npm run build` builds both frontend and backend for production.
-* Make sure production environment variables are set before starting the server.
-* Use a process manager such as PM2 or systemd in production.
-
+- `npm run build` builds both frontend and backend for production.
+- Make sure production environment variables are set before starting the server.
+- Use a process manager such as PM2 or systemd in production.
