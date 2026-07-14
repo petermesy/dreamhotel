@@ -1,28 +1,34 @@
 import { Response } from "express";
 import { prisma } from "../../core/db.js";
 import { v2 as cloudinary } from "cloudinary";
-import fs from "fs";
-import path from "path";
 import { createGalleryImageSchema, updateGalleryImageSchema } from "./gallery.schemas.js";
 import { ValidationError, NotFoundError } from "../../core/errors.js";
 import { AuthenticatedRequest } from "../../core/middleware.js";
 
 // Initialize Cloudinary if credentials exist
+const cloudinaryUrl = process.env.CLOUDINARY_URL;
+const cloudinaryCloudName = process.env.CLOUDINARY_CLOUD_NAME;
+const cloudinaryApiKey = process.env.CLOUDINARY_API_KEY;
+const cloudinaryApiSecret = process.env.CLOUDINARY_API_SECRET;
+
 const isCloudinaryConfigured = !!(
-  process.env.CLOUDINARY_CLOUD_NAME &&
-  process.env.CLOUDINARY_API_KEY &&
-  process.env.CLOUDINARY_API_SECRET
+  cloudinaryUrl || (cloudinaryCloudName && cloudinaryApiKey && cloudinaryApiSecret)
 );
 
 if (isCloudinaryConfigured) {
-  cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET,
-  });
+  if (cloudinaryUrl) {
+    cloudinary.config({ cloudinary_url: cloudinaryUrl, secure: true });
+  } else {
+    cloudinary.config({
+      cloud_name: cloudinaryCloudName,
+      api_key: cloudinaryApiKey,
+      api_secret: cloudinaryApiSecret,
+      secure: true,
+    });
+  }
   console.log("Cloudinary successfully configured for Gallery image uploads.");
 } else {
-  console.log("Cloudinary credentials missing. Gallery uploads will fallback to local disk storage (/uploads).");
+  console.log("Cloudinary credentials missing. Gallery uploads require Cloudinary credentials and cannot proceed.");
 }
 
 // Upload buffer to Cloudinary
@@ -40,33 +46,15 @@ function uploadBufferToCloudinary(buffer: Buffer): Promise<string> {
   });
 }
 
-// Fallback: save file locally on disk
-async function saveFileLocally(buffer: Buffer, originalname: string): Promise<string> {
-  const uploadsDir = path.join(process.cwd(), "uploads");
-  if (!fs.existsSync(uploadsDir)) {
-    fs.mkdirSync(uploadsDir, { recursive: true });
-  }
-  const ext = path.extname(originalname) || ".jpg";
-  const filename = `gallery-${Date.now()}-${Math.floor(Math.random() * 1000)}${ext}`;
-  const filePath = path.join(uploadsDir, filename);
-  await fs.promises.writeFile(filePath, buffer);
-  return `/uploads/${filename}`;
-}
-
 // Helper to process uploaded file or get the URL
 async function processImageUpload(file?: Express.Multer.File): Promise<string | null> {
   if (!file) return null;
 
-  if (isCloudinaryConfigured) {
-    try {
-      return await uploadBufferToCloudinary(file.buffer);
-    } catch (err) {
-      console.error("Cloudinary upload failed, falling back to local file storage:", err);
-      return await saveFileLocally(file.buffer, file.originalname);
-    }
-  } else {
-    return await saveFileLocally(file.buffer, file.originalname);
+  if (!isCloudinaryConfigured) {
+    throw new Error("Cloudinary is not configured. Gallery uploads require Cloudinary credentials.");
   }
+
+  return uploadBufferToCloudinary(file.buffer);
 }
 
 // --- CONTROLLER ACTIONS ---

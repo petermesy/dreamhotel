@@ -1,6 +1,7 @@
 import React from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Image as ImageIcon, ChevronLeft, ChevronRight, X, ZoomIn, Info } from "lucide-react";
+import { optimizeCloudinaryUrl } from "./cloudinary";
 
 interface GalleryImage {
   id: string | number;
@@ -329,11 +330,23 @@ export default function GalleryPage() {
                     {/* Image block (Aspect ratio 4:3) */}
                     <div className="aspect-[4/3] w-full bg-slate-100 overflow-hidden relative">
                       <img
-                        src={img.url}
-                        alt={img.title}
-                        referrerPolicy="no-referrer"
-                        className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500 ease-out"
-                      />
+  src={optimizeCloudinaryUrl(img.url, {
+    width: 600,
+    crop: "fill",
+    gravity: "auto",
+    quality: "auto",
+    dpr: "auto",
+    format: "auto",
+  })}
+  alt={img.title}
+  loading="lazy"
+  onError={(e) => {
+    console.error("Failed to load image URL:", img.url);
+    // Optional: fallback to a placeholder
+    // (e.currentTarget.src = "/fallback-image.jpg");
+  }}
+  className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500 ease-out"
+/>
                       {/* Subtle black overlay on hover with Zoom icon */}
                       <div className="absolute inset-0 bg-slate-950/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                         <div className="bg-white/95 backdrop-blur text-slate-950 p-3 rounded-full shadow-lg transform scale-90 group-hover:scale-100 transition-transform duration-300">
@@ -423,8 +436,17 @@ export default function GalleryPage() {
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ duration: 0.3 }}
-                  src={filteredImages[lightboxIndex].url}
+                  src={optimizeCloudinaryUrl(filteredImages[lightboxIndex].url, {
+                    width: 1200,
+                    crop: "limit",
+                    quality: "auto",
+                    dpr: "auto",
+                    format: "auto",
+                  })}
                   alt={filteredImages[lightboxIndex].title}
+                  loading="eager"
+                  decoding="async"
+                  fetchPriority="high"
                   referrerPolicy="no-referrer"
                   className="max-w-full max-h-[70vh] object-contain rounded-lg shadow-2xl border border-white/10"
                 />

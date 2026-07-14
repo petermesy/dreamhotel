@@ -10,7 +10,8 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 
-// Ensure the local uploads directory exists and serve it statically
+// Serve legacy upload files for previously saved gallery items.
+// New gallery uploads are Cloudinary-only and no longer write to disk.
 const uploadsDir = path.join(process.cwd(), "uploads");
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
