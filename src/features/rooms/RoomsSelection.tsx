@@ -55,7 +55,7 @@ const localRoomTypes = [
     description:
       "The Business King Room on our business floor offers gorgeous views of the city's skyline and comes with added comforts and premium complimentary facilities.",
     imageUrl:
-      "https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&auto=compress&fit=crop&w=800&q=70",
+      "https://res.cloudinary.com/cpusqoyy/image/upload/f_auto,q_auto,dpr_auto,w_800,c_fill,g_auto/v1783996666/0V1A3522_f9iwrr.jpg",
   },
 ];
 

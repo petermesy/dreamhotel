@@ -14,20 +14,25 @@ import { FacilityItem } from "./types";
 export const getRoomTypeImages = (id: string): string[] => {
   const roomImages: Record<string, string[]> = {
     STANDARD_QUEEN: [
-      "https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&auto=compress&fit=crop&w=800&q=70",
-      "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&auto=compress&fit=crop&w=800&q=70",
-      "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&auto=compress&fit=crop&w=800&q=70"
+      "https://res.cloudinary.com/cpusqoyy/image/upload/f_auto,q_auto,dpr_auto,w_800,c_fill,g_auto/v1783996666/0V1A3522_f9iwrr.jpg",
+      "https://res.cloudinary.com/cpusqoyy/image/upload/f_auto,q_auto,dpr_auto,w_800,c_fill,g_auto/v1783996638/0V1A3521_y3sus0.jpg",
+      "https://res.cloudinary.com/cpusqoyy/image/upload/f_auto,q_auto,dpr_auto,w_800,c_fill,g_auto/v1783996752/0V1A3507_iyneji.jpg",
+      "https://res.cloudinary.com/cpusqoyy/image/upload/f_auto,q_auto,dpr_auto,w_800,c_fill,g_auto/v1783997512/0V1A3508_rqvpr9.jpg"
     ],
 
     SUPERIOR_KING: [
       "https://res.cloudinary.com/cpusqoyy/image/upload/f_auto,q_auto,dpr_auto,w_800,c_fill,g_auto/v1783760805/0V1A3496_c7npdk.jpg",
       "https://res.cloudinary.com/cpusqoyy/image/upload/f_auto,q_auto,dpr_auto,w_800,c_fill,g_auto/v1783771667/0V1A3491_vtdeve.jpg",
-      "https://res.cloudinary.com/cpusqoyy/image/upload/f_auto,q_auto,dpr_auto,w_800,c_fill,g_auto/v1783769842/0V1A3498_hjnhmh.jpg"
+      "https://res.cloudinary.com/cpusqoyy/image/upload/f_auto,q_auto,dpr_auto,w_800,c_fill,g_auto/v1783769842/0V1A3498_hjnhmh.jpg",
+      "https://res.cloudinary.com/cpusqoyy/image/upload/f_auto,q_auto,dpr_auto,w_800,c_fill,g_auto/v1783997512/0V1A3508_rqvpr9.jpg",
+      "https://res.cloudinary.com/cpusqoyy/image/upload/f_auto,q_auto,dpr_auto,w_800,c_fill,g_auto/v1783996752/0V1A3507_iyneji.jpg"
     ],
 
     DOUBLE_STANDARD: [
       "https://res.cloudinary.com/cpusqoyy/image/upload/f_auto,q_auto,dpr_auto,w_800,c_fill,g_auto/v1783768011/0V1A3512_vsen2s.jpg",
-      "https://res.cloudinary.com/cpusqoyy/image/upload/f_auto,q_auto,dpr_auto,w_800,c_fill,g_auto/v1783767955/0V1A3520_xt246z.jpg"
+      "https://res.cloudinary.com/cpusqoyy/image/upload/f_auto,q_auto,dpr_auto,w_800,c_fill,g_auto/v1783767955/0V1A3520_xt246z.jpg",
+      "https://res.cloudinary.com/cpusqoyy/image/upload/f_auto,q_auto,dpr_auto,w_800,c_fill,g_auto/v1783997512/0V1A3508_rqvpr9.jpg",
+      "https://res.cloudinary.com/cpusqoyy/image/upload/f_auto,q_auto,dpr_auto,w_800,c_fill,g_auto/v1783996752/0V1A3507_iyneji.jpg"
     ],
 
     EXECUTIVE_SUITE: [
