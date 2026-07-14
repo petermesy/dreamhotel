@@ -23,7 +23,7 @@ export default function MapSection() {
                   </div>
                 </div>
                 <a
-                  href="https://maps.google.com"
+                  href="https://maps.app.goo.gl/dnSN2XocBmSF8Cp78"
                   target="_blank"
                   rel="noreferrer"
                   className="p-2 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 transition-colors cursor-pointer"

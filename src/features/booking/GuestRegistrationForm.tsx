@@ -1,7 +1,7 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState, selectRoomType, setBookingSuccess, setBookingError, loginSuccess, setTab } from "../../store";
-import { HelpCircle, User, MapPin, CheckSquare, Phone, AlertCircle, Sparkles, Check, Lock } from "lucide-react";
+import { RootState, selectRoomType, setBookingSuccess, setBookingError } from "../../store";
+import { User, MapPin, CheckSquare, Phone, AlertCircle, Sparkles, Check } from "lucide-react";
 import { motion } from "motion/react";
 
 export default function GuestRegistrationForm() {
@@ -11,17 +11,7 @@ export default function GuestRegistrationForm() {
   const bookingSuccess = useSelector((state: RootState) => state.core.bookingSuccess);
   const bookingError = useSelector((state: RootState) => state.core.bookingError);
 
-  // Authentication states
   const { isAuthenticated, user, token } = useSelector((state: RootState) => state.auth);
-
-  // Inline auth form states (for standard users who need to sign up first)
-  const [isInlineSignUp, setIsInlineSignUp] = React.useState(true);
-  const [authEmail, setAuthEmail] = React.useState("");
-  const [authPassword, setAuthPassword] = React.useState("");
-  const [authName, setAuthName] = React.useState("");
-  const [authError, setAuthErrorLocal] = React.useState<string | null>(null);
-  const [authLoading, setAuthLoading] = React.useState(false);
-  const [authSuccessMsg, setAuthSuccessMsg] = React.useState<string | null>(null);
 
   const getTodayDateString = () => {
     const d = new Date();
@@ -168,58 +158,6 @@ export default function GuestRegistrationForm() {
     dispatch(selectRoomType(null));
   };
 
-  const handleInlineAuth = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setAuthErrorLocal(null);
-    setAuthSuccessMsg(null);
-    setAuthLoading(true);
-
-    try {
-      if (isInlineSignUp) {
-        // Handle signup
-        const res = await fetch("/api/auth/signup", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            email: authEmail,
-            name: authName,
-            password: authPassword
-          })
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || "Signup failed");
-
-        setAuthSuccessMsg("Account created! Logging you in...");
-        
-        // Auto-login
-        const loginRes = await fetch("/api/auth/login", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email: authEmail, password: authPassword })
-        });
-        const loginData = await loginRes.json();
-        if (!loginRes.ok) throw new Error(loginData.error || "Login failed");
-
-        dispatch(loginSuccess({ token: loginData.token, user: loginData.user }));
-      } else {
-        // Handle login
-        const res = await fetch("/api/auth/login", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email: authEmail, password: authPassword })
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || "Login failed");
-
-        dispatch(loginSuccess({ token: data.token, user: data.user }));
-      }
-    } catch (err: any) {
-      setAuthErrorLocal(err.message);
-    } finally {
-      setAuthLoading(false);
-    }
-  };
-
   // If successfully booked, render the confirmation card screen as required
   if (bookingSuccess) {
     return (
@@ -278,102 +216,6 @@ export default function GuestRegistrationForm() {
     );
   }
 
-  if (!isAuthenticated) {
-    return (
-      <div className="w-full bg-slate-50 py-16 animate-fade-in">
-        <div className="max-w-md mx-auto px-4 font-mono text-sm">
-          <div className="text-center mb-8">
-            <span className="text-xs font-mono uppercase tracking-widest text-indigo-600 mb-2 font-bold block">Account Required</span>
-            <h2 className="text-3xl font-extrabold text-slate-950 tracking-tight font-sans">Guest Verification</h2>
-            <p className="text-slate-600 text-xs font-mono leading-relaxed mt-2">
-              Before reserving a room, you must sign up or log in. This links bookings to your profile, lets you submit bank payment transfers, and view your reservation history.
-            </p>
-          </div>
-
-          <div className="bg-white rounded-3xl p-8 shadow-md border border-slate-200 font-mono">
-            {/* Toggle headers */}
-            <div className="flex border-b border-slate-100 pb-4 mb-6 text-center text-xs font-bold font-sans">
-              <button 
-                type="button"
-                onClick={() => { setIsInlineSignUp(true); setAuthErrorLocal(null); }}
-                className={`flex-1 py-2 rounded-lg transition-all cursor-pointer ${isInlineSignUp ? "bg-indigo-50 text-indigo-900 font-bold" : "text-slate-400 hover:text-slate-900"}`}
-              >
-                1. Sign Up (New Guest)
-              </button>
-              <button 
-                type="button"
-                onClick={() => { setIsInlineSignUp(false); setAuthErrorLocal(null); }}
-                className={`flex-1 py-2 rounded-lg transition-all cursor-pointer ${!isInlineSignUp ? "bg-indigo-50 text-indigo-900 font-bold" : "text-slate-400 hover:text-slate-900"}`}
-              >
-                2. Log In (Existing)
-              </button>
-            </div>
-
-            <form onSubmit={handleInlineAuth} className="space-y-4">
-              {isInlineSignUp && (
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-xs font-bold text-slate-700">Full Name</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="e.g. Abebe Kebede"
-                    value={authName}
-                    onChange={(e) => setAuthName(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-200 focus:border-indigo-500 rounded-lg p-3 text-slate-950 outline-none transition-all text-xs"
-                  />
-                </div>
-              )}
-
-              <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-bold text-slate-700">Email Address</label>
-                <input
-                  type="email"
-                  required
-                  placeholder="Enter email address"
-                  value={authEmail}
-                  onChange={(e) => setAuthEmail(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 focus:border-indigo-500 rounded-lg p-3 text-slate-950 outline-none transition-all text-xs"
-                />
-              </div>
-
-              <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-bold text-slate-700">Password</label>
-                <input
-                  type="password"
-                  required
-                  placeholder="••••••••"
-                  value={authPassword}
-                  onChange={(e) => setAuthPassword(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 focus:border-indigo-500 rounded-lg p-3 text-slate-950 outline-none transition-all text-xs"
-                />
-              </div>
-
-              {authError && (
-                <div className="text-xs bg-rose-50 border border-rose-100 text-rose-700 p-3 rounded-lg font-bold">
-                  ✕ {authError}
-                </div>
-              )}
-
-              {authSuccessMsg && (
-                <div className="text-xs bg-emerald-50 border border-emerald-100 text-emerald-800 p-3 rounded-lg font-bold">
-                  ✓ {authSuccessMsg}
-                </div>
-              )}
-
-              <button
-                type="submit"
-                disabled={authLoading}
-                className="w-full bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-bold py-3.5 rounded-xl transition-all flex justify-center items-center gap-2 cursor-pointer font-sans text-xs disabled:opacity-55"
-              >
-                {authLoading ? "Verifying..." : isInlineSignUp ? "Register Guest Account" : "Log In & Continue"}
-              </button>
-            </form>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="w-full bg-slate-50 py-16 animate-fade-in">
       <div className="max-w-4xl mx-auto px-4 sm:px-6">
@@ -382,7 +224,7 @@ export default function GuestRegistrationForm() {
           <span className="text-xs font-mono uppercase tracking-widest text-indigo-600 mb-2 font-bold block">Live Guest Registry</span>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-950 tracking-tight mb-4 font-sans">Book Your Room</h2>
           <p className="text-slate-600 text-sm font-mono leading-relaxed">
-            Fill out our standardized 7-field offline guest registration form to automatically assign and lock in your room number.
+            No account or login is required. Fill out the mandatory guest registration fields below to check availability and confirm your reservation.
           </p>
         </div>
 
