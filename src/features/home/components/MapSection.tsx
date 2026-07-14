@@ -22,58 +22,21 @@ export default function MapSection() {
                     <span className="text-[10px] font-mono text-slate-500 font-bold">4.9 (84 reviews)</span>
                   </div>
                 </div>
- <div className="space-y-4">
-  {/* Google Maps Embed */}
-  <div className="overflow-hidden rounded-2xl shadow-lg border border-slate-200">
-    <iframe
-      src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d937.7978810388715!2d36.8894886379811!3d6.303234058282574!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e1!3m2!1sen!2set!4v1784023310455!5m2!1sen!2set"
-      className="w-full h-80 md:h-96"
-      style={{ border: 0 }}
-      loading="lazy"
-      allowFullScreen
-      referrerPolicy="strict-origin-when-cross-origin"
-      title="Dream Hotel Location"
-    />
-  </div>
+              </div>
+            </div>
 
-  {/* Open in Google Maps */}
-  <a
-    href="https://maps.app.goo.gl/dnSN2XocBmSF8Cp78"
-    target="_blank"
-    rel="noopener noreferrer"
-    className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
-  >
-    <MapPin className="w-4 h-4" />
-    Open in Google Maps
-  </a>
-</div>
-              </div>
+            <div className="w-full h-full bg-slate-100 border border-slate-200 rounded-2xl overflow-hidden relative shadow-inner">
+              <iframe
+                title="Dream Hotel Location Map"
+                src="https://www.google.com/maps?q=6.3028486,36.8882250&z=15&output=embed"
+                className="absolute inset-0 w-full h-full border-0"
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="strict-origin-when-cross-origin"
+              />
             </div>
-            {/* Styled Vector Map Placeholder Background */}
-            <div className="absolute inset-0 z-0 bg-[#e5e1d8]/40">
-              <div className="absolute inset-0 opacity-20 pointer-events-none" style={{
-                backgroundImage: `radial-gradient(#8c867a 1.2px, transparent 1.2px), radial-gradient(#8c867a 1.2px, #e5e1d8 1.2px)`,
-                backgroundSize: "24px 24px",
-                backgroundPosition: "0 0, 12px 12px"
-              }} />
-             
-              {/* Styled Rivers/Roads inside map */}
-              <div className="absolute top-1/3 left-0 w-full h-12 bg-sky-200/50 rotate-6" />
-              <div className="absolute top-0 left-1/4 w-8 h-full bg-slate-300/40 -rotate-12" />
-              <div className="absolute top-1/2 left-0 w-full h-10 bg-slate-300/40 rotate-12" />
-              {/* Pulsing red pin pointing to Dream Hotel */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center">
-                <span className="relative flex h-8 w-8">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-8 w-8 bg-red-600 items-center justify-center text-white text-xs font-bold shadow-md">
-                    📍
-                  </span>
-                </span>
-                <div className="mt-1 bg-slate-900 text-white text-[9px] font-mono px-2 py-0.5 rounded font-bold shadow">
-                  DREAM HOTEL
-                </div>
-              </div>
-            </div>
+
+  
             {/* Footer row of map card */}
             <div className="relative z-10 mt-auto pt-4 border-t border-slate-200/60 bg-white/80 backdrop-blur -mx-6 -mb-6 px-6 py-4 flex flex-wrap justify-between items-center text-xs text-slate-600 font-mono gap-4">
               <span>Latitude: 6.3128° N • Longitude: 36.8184° E</span>
