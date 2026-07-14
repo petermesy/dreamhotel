@@ -1,4 +1,4 @@
-# Dream Pension
+# Dream Hotel
 
 A full-stack guest house management application for guest registration, room booking, enquiries, and back-office management. Built with React/Vite on the frontend and Express on the backend.
 
@@ -153,3 +153,67 @@ sudo systemctl reload nginx || sudo nginx -s reload
 - `npm run build` builds both frontend and backend for production.
 - Make sure production environment variables are set before starting the server.
 - Use a process manager such as PM2 or systemd in production.
+
+---
+
+## ☁️ Cloudinary Image Uploads
+
+This project uses Cloudinary for gallery image uploads and runtime optimization.
+
+### Required environment variables
+
+Set these for the backend to upload images:
+
+- `CLOUDINARY_URL` or all three of:
+  - `CLOUDINARY_CLOUD_NAME`
+  - `CLOUDINARY_API_KEY`
+  - `CLOUDINARY_API_SECRET`
+
+If credentials are not configured, gallery uploads will be disabled.
+
+### How uploads work
+
+- Admin uploads are handled by `backend/modules/gallery/gallery.controller.ts`.
+- Uploaded files are streamed to Cloudinary using the `cloudinary` package.
+- Uploaded images are stored under the `dream_hotel_gallery` folder in Cloudinary.
+- The backend stores the secure Cloudinary URL in the gallery record.
+
+### Frontend optimization
+
+The frontend optimizes Cloudinary image URLs at render time using `src/features/gallery/cloudinary.ts`.
+
+The helper supports options like:
+
+- `width`
+- `crop`
+- `gravity`
+- `quality`
+- `dpr`
+- `format`
+
+It creates URLs with Cloudinary transformations such as `f_auto`, `q_auto`, and `dpr_auto`.
+
+### Usage examples
+
+Example backend env values:
+
+```env
+CLOUDINARY_URL=cloudinary://<api_key>:<api_secret>@<cloud_name>
+```
+
+Example runtime URL optimization:
+
+```ts
+import { optimizeCloudinaryUrl } from "./features/gallery/cloudinary";
+
+const optimizedUrl = optimizeCloudinaryUrl(image.url, {
+  width: 600,
+  crop: "fill",
+  gravity: "auto",
+  quality: "auto",
+  dpr: "auto",
+  format: "auto",
+});
+```
+
+This is used in gallery components such as `GalleryCard` and `GalleryLightbox`.
