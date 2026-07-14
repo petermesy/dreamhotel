@@ -1,5 +1,6 @@
 import React from "react";
 import { Upload, Edit3, Trash2, Plus, RefreshCw, Image as ImageIcon, Sparkles, Check, X } from "lucide-react";
+import { optimizeCloudinaryUrl } from "../gallery/cloudinary";
 
 interface GalleryImage {
   id: number;
@@ -389,7 +390,14 @@ export default function GalleryTab() {
                   {/* Photo representation */}
                   <div className="w-20 h-20 bg-slate-200 rounded-lg overflow-hidden shrink-0 border border-slate-300 relative">
                     <img
-                      src={img.url}
+                      src={optimizeCloudinaryUrl(img.url, {
+                                width: 400,
+                                crop: "fill",
+                                gravity: "auto",
+                                quality: "auto",
+                                dpr: "auto",
+                                format: "auto",
+                              })}
                       alt={img.title}
                       className="w-full h-full object-cover"
                       referrerPolicy="no-referrer"
