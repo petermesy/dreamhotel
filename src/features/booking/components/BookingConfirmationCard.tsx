@@ -39,6 +39,14 @@ export default function BookingConfirmationCard({ bookingSuccess, onNewBooking }
           </div>
         </div>
 
+        <div className="bg-amber-50 border border-amber-200/60 text-amber-900 p-4 rounded-xl text-left text-xs flex gap-3 shadow-inner">
+          <AlertCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+          <div>
+            <strong className="block text-amber-950 mb-1">CBE / TELEBIRR Receipt</strong>
+            If you plan to pay through CBE bank transfer or Telebirr, send the SMS or receipt text within 12 hours of booking. If no receipt is received during that window, the reservation will be cancelled automatically.
+          </div>
+        </div>
+
         <div className="bg-indigo-50 border border-indigo-200/60 text-indigo-955 p-4 rounded-xl text-left text-xs flex gap-3 shadow-inner">
           <AlertCircle className="w-5 h-5 text-indigo-600 shrink-0 mt-0.5" />
           <div>

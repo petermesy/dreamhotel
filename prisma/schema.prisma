@@ -58,7 +58,7 @@ model Booking {
   status         String     @default("BOOKED") // "BOOKED", "CHECKED_IN", "CHECKED_OUT", "CANCELLED"
   paymentStatus  String     @default("PENDING") // "PENDING", "RECEIVED"
   totalPrice     Float
-  paymentMessage String? // Copy-pasted bank transfer message (CBE / Telebirr)
+  paymentMessage String?    @db.Text // Copy-pasted bank transfer message (CBE / Telebirr)
   userId         Int?
   user           User?      @relation(fields: [userId], references: [id], onDelete: SetNull)
   createdAt      DateTime   @default(now())

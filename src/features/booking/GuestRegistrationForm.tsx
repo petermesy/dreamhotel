@@ -1,7 +1,7 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState, selectRoomType, setBookingSuccess, setBookingError } from "../../store";
-import { AlertCircle, Check } from "lucide-react";
+import { AlertCircle, Check, Upload } from "lucide-react";
 import BookingHeader from "./components/BookingHeader";
 import RoomStaySection from "./components/RoomStaySection";
 import GuestRegistrationFields from "./components/GuestRegistrationFields";
@@ -49,6 +49,9 @@ export default function GuestRegistrationForm() {
   const [checkingAvailability, setCheckingAvailability] = React.useState(false);
   const [availableCount, setAvailableCount] = React.useState<number | null>(null);
   const [availabilityError, setAvailabilityError] = React.useState<string | null>(null);
+  const [paymentMessage, setPaymentMessage] = React.useState("");
+  const [paymentAttachmentName, setPaymentAttachmentName] = React.useState("");
+  const [paymentAttachmentPreview, setPaymentAttachmentPreview] = React.useState<string | null>(null);
 
   // Default room types fallback if not loaded
   const localRoomTypes = roomTypes.length > 0 ? roomTypes : [
@@ -95,12 +98,35 @@ export default function GuestRegistrationForm() {
     }
   };
 
+  const handleReceiptFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) {
+      setPaymentAttachmentName("");
+      setPaymentAttachmentPreview(null);
+      return;
+    }
+
+    setPaymentAttachmentName(file.name);
+    const reader = new FileReader();
+    reader.onload = () => {
+      setPaymentAttachmentPreview(typeof reader.result === "string" ? reader.result : null);
+    };
+    reader.readAsDataURL(file);
+  };
+
   const handleBookSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     dispatch(setBookingError(null));
 
     const finalPurpose = formData.purpose === "Other" ? formData.otherPurpose || "Other" : formData.purpose;
+    const receiptText = [paymentMessage.trim(), paymentAttachmentName ? `Attached file: ${paymentAttachmentName}` : ""]
+      .filter(Boolean)
+      .join("\n");
+    const receiptAttachmentBlock = paymentAttachmentPreview
+      ? `\n\n[ATTACHMENT_PREVIEW]\n${paymentAttachmentPreview}`
+      : "";
+    const paymentPayload = [receiptText, receiptAttachmentBlock].filter(Boolean).join("\n\n") || null;
 
     const headers: Record<string, string> = {
       "Content-Type": "application/json"
@@ -117,7 +143,8 @@ export default function GuestRegistrationForm() {
       phone: formData.phone,
       roomTypeId: selectedRoomTypeId,
       checkIn: formData.checkIn,
-      checkOut: formData.checkOut
+      checkOut: formData.checkOut,
+      paymentMessage: paymentPayload || null
     };
 
     if (isAuthenticated && user?.id) {
@@ -148,6 +175,9 @@ export default function GuestRegistrationForm() {
         checkIn: getTodayDateString(),
         checkOut: getTomorrowDateString()
       });
+      setPaymentMessage("");
+      setPaymentAttachmentName("");
+      setPaymentAttachmentPreview(null);
       setAvailableCount(null);
     } catch (err: any) {
       dispatch(setBookingError(err.message));
@@ -225,6 +255,36 @@ export default function GuestRegistrationForm() {
                 </div>
               </div>
             )}
+
+            <div className="bg-amber-50 border border-amber-200/60 text-amber-900 p-4 rounded-xl text-left text-xs flex gap-3 shadow-inner">
+              <AlertCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+              <div className="w-full space-y-3">
+                <div>
+                  <strong className="block text-amber-950 mb-1">CBE / TELEBIRR Receipt</strong>
+                  Paste the SMS text or receipt from your CBE bank transfer or Telebirr payment below, or attach a screenshot/receipt image for immediate front-desk confirmation. If no payment receipt is sent within 12 hours, the reservation will be automatically cancelled.
+                </div>
+
+                <textarea
+                  rows={4}
+                  value={paymentMessage}
+                  onChange={(e) => setPaymentMessage(e.target.value)}
+                  placeholder="Paste the SMS text, transfer reference, amount, date, or other payment details here..."
+                  className="w-full bg-white border border-amber-200 rounded-lg p-3 text-slate-800 outline-none resize-none"
+                />
+
+                <label className="flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-dashed border-amber-300 bg-white px-3 py-2.5 text-[11px] font-semibold text-amber-800 transition hover:bg-amber-100">
+                  <Upload className="h-4 w-4" />
+                  <span>{paymentAttachmentName ? `Change screenshot / receipt (${paymentAttachmentName})` : "Attach screenshot or receipt image"}</span>
+                  <input type="file" accept="image/*,.pdf" onChange={handleReceiptFileChange} className="sr-only" />
+                </label>
+
+                {paymentAttachmentPreview && (
+                  <div className="rounded-lg border border-amber-200 bg-white p-2">
+                    <img src={paymentAttachmentPreview} alt="Payment attachment preview" className="max-h-40 w-full rounded object-contain" />
+                  </div>
+                )}
+              </div>
+            </div>
 
             {/* Non-negotiable cash payment policy notice */}
             <div className="bg-indigo-50 border border-indigo-200/60 text-indigo-955 p-4 rounded-xl text-left text-xs flex gap-3 shadow-inner">

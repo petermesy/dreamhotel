@@ -8,6 +8,24 @@ import {
 import { ValidationError, NotFoundError, ConflictError, UnauthorizedError } from "../../core/errors.js";
 import { AuthenticatedRequest } from "../../core/middleware.js";
 
+const PAYMENT_WINDOW_MS = 12 * 60 * 60 * 1000;
+
+async function autoCancelIfExpired(booking: any) {
+  if (!booking) return booking;
+  if (booking.status !== "BOOKED" || booking.paymentStatus !== "PENDING") return booking;
+  if (booking.paymentMessage) return booking;
+
+  const now = new Date();
+  const deadline = new Date(booking.createdAt.getTime() + PAYMENT_WINDOW_MS);
+  if (now < deadline) return booking;
+
+  return prisma.booking.update({
+    where: { id: booking.id },
+    data: { status: "CANCELLED" },
+    include: { roomType: true, room: true }
+  });
+}
+
 export async function createBooking(req: AuthenticatedRequest, res: Response) {
   const result = createBookingSchema.safeParse(req.body);
   if (!result.success) {
@@ -107,7 +125,8 @@ export async function getBookingLookup(req: AuthenticatedRequest, res: Response)
     throw new NotFoundError("Booking not found with this reference code");
   }
 
-  res.json(booking);
+  const resolvedBooking = await autoCancelIfExpired(booking);
+  res.json(resolvedBooking);
 }
 
 export async function submitReceiptMessage(req: AuthenticatedRequest, res: Response) {
@@ -122,6 +141,11 @@ export async function submitReceiptMessage(req: AuthenticatedRequest, res: Respo
   const booking = await prisma.booking.findUnique({ where: { id } });
   if (!booking) {
     throw new NotFoundError("Booking not found");
+  }
+
+  const resolvedBooking = await autoCancelIfExpired(booking);
+  if (resolvedBooking.status === "CANCELLED" && resolvedBooking.id === booking.id) {
+    throw new ValidationError("This reservation was automatically cancelled because no payment receipt was submitted within 12 hours.");
   }
 
   const updated = await prisma.booking.update({
@@ -179,7 +203,8 @@ export async function getUserBookings(req: AuthenticatedRequest, res: Response) 
     orderBy: { createdAt: "desc" }
   });
 
-  res.json(bookings);
+  const resolvedBookings = await Promise.all(bookings.map((booking) => autoCancelIfExpired(booking)));
+  res.json(resolvedBookings);
 }
 
 export async function updateBookingDetails(req: AuthenticatedRequest, res: Response) {

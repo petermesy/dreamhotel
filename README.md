@@ -60,7 +60,7 @@ npx prisma migrate dev --name init
 #### 3. Seed demo data
 
 ```bash
-npx ts-node prisma/seed.ts
+npx tsx prisma/seed.ts
 ```
 
 If you want to reset and reseed the database from scratch:

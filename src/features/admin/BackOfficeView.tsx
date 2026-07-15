@@ -40,13 +40,80 @@ function BackOfficeSection(props: BackOfficeProps) {
 }
 
 function ReservationsTab(props: BackOfficeProps) {
+  const renderPaymentCell = (booking: any) => {
+    const paymentText = booking.paymentMessage || "";
+    const imageSources = Array.from(new Set(paymentText.match(/data:image\/[a-zA-Z0-9.+-]+;base64,[^\s]+/g) || []));
+    const displayText = paymentText
+      .replace(/\[ATTACHMENT_PREVIEW\]/gi, "")
+      .replace(/data:image\/[a-zA-Z0-9.+-]+;base64,[^\s]+/g, "")
+      .trim();
+
+    const renderLinkedText = (text: string) => {
+      const parts = text.split(/(https?:\/\/[^\s]+|www\.[^\s]+)/gi);
+      return parts.map((part, index) => {
+        if (!part) return null;
+        const isLink = /^https?:\/\//i.test(part) || /^www\./i.test(part);
+        if (!isLink) {
+          return <span key={`${part}-${index}`}>{part}</span>;
+        }
+        const href = /^www\./i.test(part) ? `https://${part}` : part;
+        return (
+          <a
+            key={`${part}-${index}`}
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-indigo-700 underline break-all"
+          >
+            {part}
+          </a>
+        );
+      });
+    };
+
+    return (
+      <div className="space-y-2">
+        <button
+          onClick={() => props.onTogglePayment(booking.id, booking.paymentStatus)}
+          className={`px-2.5 py-1 rounded text-[10px] font-bold border transition-all cursor-pointer ${booking.paymentStatus === "RECEIVED" ? "bg-emerald-50 text-emerald-700 border-emerald-200" : "bg-indigo-50 text-indigo-700 border-indigo-200 hover:bg-indigo-100"}`}
+        >
+          {booking.paymentStatus}
+        </button>
+        {booking.paymentMessage ? (
+          <div className="rounded-md border border-amber-200 bg-amber-50 p-2 text-[10px] text-amber-800">
+            <div className="font-bold uppercase tracking-wide mb-1">Receipt</div>
+            {displayText ? (
+              <div className="whitespace-pre-wrap break-words leading-relaxed">{renderLinkedText(displayText)}</div>
+            ) : (
+              <div className="text-slate-400">No text message attached.</div>
+            )}
+            {imageSources.length > 0 && (
+              <div className="mt-3 space-y-2">
+                {imageSources.map((src, index) => (
+                  <img
+                    key={`${src.slice(0, 20)}-${index}`}
+                    src={src}
+                    alt={`Uploaded receipt screenshot ${index + 1}`}
+                    className="w-full max-h-48 rounded-md border border-slate-200 object-contain bg-slate-50"
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="text-[10px] text-slate-400">No receipt submitted</div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div className="space-y-6">
       <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col md:flex-row gap-4 font-mono text-xs">
         <div className="flex-1"><input type="text" placeholder="Search bookings by code, name, phone, room..." value={props.searchTerm} onChange={(e) => props.onSearchTermChange(e.target.value)} className="w-full bg-slate-50 border border-slate-200 focus:border-indigo-500 rounded-lg p-3 outline-none transition-all" /></div>
         <div className="flex gap-4"><select value={props.statusFilter} onChange={(e) => props.onStatusFilterChange(e.target.value)} className="bg-slate-50 border border-slate-200 rounded-lg p-3 outline-none"><option value="">All Statuses</option><option value="BOOKED">BOOKED</option><option value="CHECKED_IN">CHECKED_IN</option><option value="CHECKED_OUT">CHECKED_OUT</option><option value="CANCELLED">CANCELLED</option></select><select value={props.paymentFilter} onChange={(e) => props.onPaymentFilterChange(e.target.value)} className="bg-slate-50 border border-slate-200 rounded-lg p-3 outline-none"><option value="">All Payments</option><option value="PENDING">PENDING</option><option value="RECEIVED">RECEIVED</option></select></div>
       </div>
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden font-mono text-xs"><div className="overflow-x-auto"><table className="w-full text-left border-collapse"><thead><tr className="bg-slate-50 text-slate-500 font-bold border-b border-slate-100"><th className="p-4">Reference</th><th className="p-4">Guest Details</th><th className="p-4">Room & Floor</th><th className="p-4">Stay Dates</th><th className="p-4">Status</th><th className="p-4">Payment</th><th className="p-4">Quote (ETB)</th><th className="p-4 text-right">Actions</th></tr></thead><tbody className="divide-y divide-slate-100">{props.reservations.length === 0 ? <tr><td colSpan={8} className="p-8 text-center text-slate-400">No active reservation matching filter log found in the database.</td></tr> : props.reservations.map((booking) => <tr key={booking.id} className="hover:bg-slate-50/55 transition-colors"><td className="p-4 font-bold text-slate-950">{booking.id}</td><td className="p-4"><span className="font-bold text-slate-900 font-sans block">{booking.fullName}</span><span className="text-slate-400 text-[10px]">{booking.phone} • {booking.purpose}</span></td><td className="p-4"><span className="font-bold text-slate-800">Room {booking.roomNumber || "None"}</span><span className="text-slate-400 text-[10px] block">{booking.roomType?.name}</span></td><td className="p-4"><span className="block">{new Date(booking.checkIn).toLocaleDateString()}</span><span className="text-slate-400 text-[10px] block">to {new Date(booking.checkOut).toLocaleDateString()}</span></td><td className="p-4"><span className={`px-2 py-0.5 rounded text-[10px] font-bold ${booking.status === "BOOKED" ? "bg-indigo-100 text-indigo-800" : booking.status === "CHECKED_IN" ? "bg-emerald-100 text-emerald-800" : booking.status === "CHECKED_OUT" ? "bg-blue-100 text-blue-800" : "bg-rose-100 text-rose-800"}`}>{booking.status}</span></td><td className="p-4 min-w-[240px]"><div className="space-y-2"><button onClick={() => props.onTogglePayment(booking.id, booking.paymentStatus)} className={`px-2.5 py-1 rounded text-[10px] font-bold border transition-all cursor-pointer ${booking.paymentStatus === "RECEIVED" ? "bg-emerald-50 text-emerald-700 border-emerald-200" : "bg-indigo-50 text-indigo-700 border-indigo-200 hover:bg-indigo-100"}`}>{booking.paymentStatus}</button>{booking.paymentMessage ? <div className="rounded-md border border-amber-200 bg-amber-50 p-2 text-[10px] text-amber-800 whitespace-pre-wrap break-words" title={booking.paymentMessage}><div className="font-bold uppercase tracking-wide mb-1">Receipt</div><div className="leading-relaxed">{booking.paymentMessage}</div></div> : <div className="text-[10px] text-slate-400">No receipt submitted</div>}</div></td><td className="p-4 font-bold text-slate-900">ETB {booking.totalPrice.toLocaleString()}</td><td className="p-4 text-right"><div className="flex justify-end gap-1.5 flex-wrap">{booking.status === "BOOKED" && <button onClick={() => props.onStatusChange(booking.id, "CHECKED_IN")} className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-2 py-1 rounded text-[10px] transition-colors cursor-pointer">Check In</button>}{booking.status === "CHECKED_IN" && <button onClick={() => props.onStatusChange(booking.id, "CHECKED_OUT")} className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-2 py-1 rounded text-[10px] transition-colors cursor-pointer">Check Out</button>}{["BOOKED", "CHECKED_IN"].includes(booking.status) && <button onClick={() => props.onCancelReservation(booking.id)} className="border border-rose-200 hover:border-rose-300 bg-rose-50 text-rose-700 hover:bg-rose-100 font-bold px-2 py-1 rounded text-[10px] transition-all cursor-pointer">Cancel</button>}{props.isOwner && <button onClick={() => props.onDeleteReservation(booking.id)} className="bg-rose-600 hover:bg-rose-700 text-white font-bold p-1 rounded transition-colors cursor-pointer" title="Permanently Delete Booking (Owner Exclusive)"><Trash2 className="w-3.5 h-3.5" /></button>}</div></td></tr>)}</tbody></table></div></div>
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden font-mono text-xs"><div className="overflow-x-auto"><table className="w-full text-left border-collapse"><thead><tr className="bg-slate-50 text-slate-500 font-bold border-b border-slate-100"><th className="p-4">Reference</th><th className="p-4">Guest Details</th><th className="p-4">Room & Floor</th><th className="p-4">Stay Dates</th><th className="p-4">Status</th><th className="p-4">Payment</th><th className="p-4">Quote (ETB)</th><th className="p-4 text-right">Actions</th></tr></thead><tbody className="divide-y divide-slate-100">{props.reservations.length === 0 ? <tr><td colSpan={8} className="p-8 text-center text-slate-400">No active reservation matching filter log found in the database.</td></tr> : props.reservations.map((booking) => <tr key={booking.id} className="hover:bg-slate-50/55 transition-colors"><td className="p-4 font-bold text-slate-950">{booking.id}</td><td className="p-4"><span className="font-bold text-slate-900 font-sans block">{booking.fullName}</span><span className="text-slate-400 text-[10px]">{booking.phone} • {booking.purpose}</span></td><td className="p-4"><span className="font-bold text-slate-800">Room {booking.roomNumber || "None"}</span><span className="text-slate-400 text-[10px] block">{booking.roomType?.name}</span></td><td className="p-4"><span className="block">{new Date(booking.checkIn).toLocaleDateString()}</span><span className="text-slate-400 text-[10px] block">to {new Date(booking.checkOut).toLocaleDateString()}</span></td><td className="p-4"><span className={`px-2 py-0.5 rounded text-[10px] font-bold ${booking.status === "BOOKED" ? "bg-indigo-100 text-indigo-800" : booking.status === "CHECKED_IN" ? "bg-emerald-100 text-emerald-800" : booking.status === "CHECKED_OUT" ? "bg-blue-100 text-blue-800" : "bg-rose-100 text-rose-800"}`}>{booking.status}</span></td><td className="p-4 min-w-[240px]">{renderPaymentCell(booking)}</td><td className="p-4 font-bold text-slate-900">ETB {booking.totalPrice.toLocaleString()}</td><td className="p-4 text-right"><div className="flex justify-end gap-1.5 flex-wrap">{booking.status === "BOOKED" && <button onClick={() => props.onStatusChange(booking.id, "CHECKED_IN")} className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-2 py-1 rounded text-[10px] transition-colors cursor-pointer">Check In</button>}{booking.status === "CHECKED_IN" && <button onClick={() => props.onStatusChange(booking.id, "CHECKED_OUT")} className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-2 py-1 rounded text-[10px] transition-colors cursor-pointer">Check Out</button>}{["BOOKED", "CHECKED_IN"].includes(booking.status) && <button onClick={() => props.onCancelReservation(booking.id)} className="border border-rose-200 hover:border-rose-300 bg-rose-50 text-rose-700 hover:bg-rose-100 font-bold px-2 py-1 rounded text-[10px] transition-all cursor-pointer">Cancel</button>}{props.isOwner && <button onClick={() => props.onDeleteReservation(booking.id)} className="bg-rose-600 hover:bg-rose-700 text-white font-bold p-1 rounded transition-colors cursor-pointer" title="Permanently Delete Booking (Owner Exclusive)"><Trash2 className="w-3.5 h-3.5" /></button>}</div></td></tr>)}</tbody></table></div></div>
     </div>
   );
 }

@@ -16,7 +16,12 @@ async function main() {
 
   const owner = await prisma.user.upsert({
     where: { email: "owner@dp.com" },
-    update: {},
+    update: {
+      password: ownerPassword,
+      name: "Abebe Kebede (Owner)",
+      role: "OWNER",
+      status: "ACTIVE",
+    },
     create: {
       email: "owner@dp.com",
       password: ownerPassword,
@@ -28,7 +33,12 @@ async function main() {
 
   const reception = await prisma.user.upsert({
     where: { email: "reception@dp.com" },
-    update: {},
+    update: {
+      password: receptionPassword,
+      name: "Tigist Alene (Front Desk)",
+      role: "RECEPTION",
+      status: "ACTIVE",
+    },
     create: {
       email: "reception@dp.com",
       password: receptionPassword,
@@ -186,6 +196,7 @@ async function main() {
       phone: "+251911234567",
       status: "CHECKED_IN",
       paymentStatus: "RECEIVED",
+      paymentMessage: null,
       totalPrice: 10400.0, // 4 nights * 2600
     },
     {
@@ -201,6 +212,7 @@ async function main() {
       phone: "+251912883711",
       status: "BOOKED",
       paymentStatus: "PENDING",
+      paymentMessage: null,
       totalPrice: 9000.0, // 3 nights * 3000
     },
   ];
