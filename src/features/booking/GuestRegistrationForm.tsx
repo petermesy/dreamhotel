@@ -201,13 +201,18 @@ export default function GuestRegistrationForm() {
   }
 
   return (
-    <div className="w-full bg-slate-50 py-16 animate-fade-in">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6">
-        <form onSubmit={handleBookSubmit} className="p-8 md:p-10 space-y-8 font-mono text-sm">
+    <div className="w-full bg-gradient-to-b from-slate-100 via-slate-50 to-slate-100 py-10 sm:py-14 animate-fade-in">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6">
+        <BookingHeader />
+        <form
+          onSubmit={handleBookSubmit}
+          className="overflow-hidden rounded-[32px] border border-slate-200 bg-white/95 shadow-[0_28px_80px_-32px_rgba(15,23,42,0.18)] p-6 sm:p-8 lg:p-10 space-y-8 text-sm"
+        >
           <RoomStaySection
             selectedRoomTypeId={selectedRoomTypeId}
             roomTypes={localRoomTypes}
             formData={formData}
+            currentRoomType={currentRoomType}
             checkingAvailability={checkingAvailability}
             availableCount={availableCount}
             availabilityError={availabilityError}
@@ -302,7 +307,7 @@ export default function GuestRegistrationForm() {
             <button
               type="submit"
               disabled={loading || (availableCount !== null && availableCount === 0)}
-              className="w-full bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-bold py-4 rounded-xl text-sm transition-all shadow-md cursor-pointer disabled:opacity-55 font-sans"
+              className="w-full rounded-3xl bg-indigo-600 px-6 py-4 text-sm font-semibold text-white shadow-lg shadow-indigo-500/10 transition duration-200 ease-out hover:bg-indigo-700 active:scale-95 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {loading ? "Processing Guest Registration..." : "Lock Room & Confirm Reservation"}
             </button>

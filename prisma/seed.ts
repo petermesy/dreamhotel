@@ -11,28 +11,28 @@ async function main() {
   console.log("Seeding database...");
 
   // 1. Create Default Users
-  const ownerPassword = hashPassword("owner123");
-  const receptionPassword = hashPassword("staff123");
+  const ownerPassword = hashPassword("owner@0987");
+  const receptionPassword = hashPassword("reception@7890");
 
   const owner = await prisma.user.upsert({
-    where: { email: "owner@dp.com" },
+    where: { email: "nuru@dreamhotelsawla.com" },
     update: {
       password: ownerPassword,
-      name: "Abebe Kebede (Owner)",
+      name: "Nuru (Owner)",
       role: "OWNER",
       status: "ACTIVE",
     },
     create: {
-      email: "owner@dp.com",
+      email: "nuru@dreamhotelsawla.com",
       password: ownerPassword,
-      name: "Abebe Kebede (Owner)",
+      name: "Nuru (Owner)",
       role: "OWNER",
       status: "ACTIVE",
     },
   });
 
   const reception = await prisma.user.upsert({
-    where: { email: "reception@dp.com" },
+    where: { email: "reception@dreamhotelsawla.com" },
     update: {
       password: receptionPassword,
       name: "Tigist Alene (Front Desk)",
@@ -40,7 +40,7 @@ async function main() {
       status: "ACTIVE",
     },
     create: {
-      email: "reception@dp.com",
+      email: "reception@dreamhotelsawla.com",
       password: receptionPassword,
       name: "Tigist Alene (Front Desk)",
       role: "RECEPTION",
