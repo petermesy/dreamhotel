@@ -290,7 +290,7 @@ export default function GuestRegistrationForm() {
             <div className="bg-indigo-50 border border-indigo-200/60 text-indigo-955 p-4 rounded-xl text-left text-xs flex gap-3 shadow-inner">
               <AlertCircle className="w-5 h-5 text-indigo-600 shrink-0 mt-0.5" />
               <div>
-                <strong className="block text-indigo-900 mb-0.5">Strict Cash-Only Notice</strong>
+                <strong className="block text-indigo-900 mb-0.5">Payment Reminder</strong>
                 Booking confirmations instruct guests that payment is strictly collected in physical cash upon check-in at the property. No cards or mobile money transfers are integrated or allowed on-site.
               </div>
             </div>

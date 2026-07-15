@@ -34,7 +34,7 @@ export default function RoomStaySection({
         </div>
         <div className="inline-flex items-center gap-2 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-3.5 py-1.5 rounded-lg text-xs font-mono">
           <Sparkles className="w-4 h-4 text-indigo-400 shrink-0" />
-          <span>Cash-Only Payment upon Check-in</span>
+          <span>Payment due at check-in</span>
         </div>
       </div>
 

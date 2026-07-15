@@ -183,7 +183,7 @@ export default function AboutDreamHotel() {
                 100%
               </div>
               <div className="h-0.5 w-6 bg-indigo-500 mb-2"></div>
-              <h4 className="text-xs font-sans font-bold text-slate-800 uppercase tracking-wider">Cash-Only Honesty</h4>
+              <h4 className="text-xs font-sans font-bold text-slate-800 uppercase tracking-wider">Payment Transparency</h4>
               <p className="text-[10px] font-mono text-slate-400 mt-1 max-w-[150px]">Flat daily rates, no surprise fees</p>
             </div>
 
