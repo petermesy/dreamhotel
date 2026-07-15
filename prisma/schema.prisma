@@ -93,9 +93,9 @@ model Enquiry {
 model GalleryImage {
   id          Int      @id @default(autoincrement())
   url         String
-  category    String   // "lobby" | "rooms" | "dining" | "meetings"
+  category    String // "lobby" | "rooms" | "dining" | "meetings"
   title       String
-  description String   
+  description String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }

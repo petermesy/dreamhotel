@@ -1,8 +1,9 @@
-import React from "react";
+
+import React, { useState, useEffect, useCallback } from "react";
 import { ArrowRight, Star } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
-const hotelImages = [
+export const hotelImages = [
   {
     url: "https://res.cloudinary.com/cpusqoyy/image/upload/f_auto,q_auto,dpr_auto,w_1920,c_fill,g_auto/v1783758085/0V1A3647_ivxcem.jpg",
     title: "Elegant Boutique Rooms & Premium Guest Suites",
@@ -60,23 +61,35 @@ interface HeroCarouselProps {
 }
 
 export default function HeroCarousel({ handleNavigate }: HeroCarouselProps) {
-  const [bgIndex, setBgIndex] = React.useState(0);
+  const [bgIndex, setBgIndex] = useState(0);
 
-  React.useEffect(() => {
-    const bgInterval = setInterval(() => {
-      setBgIndex((prev) => (prev + 1) % hotelImages.length);
-    }, 6000);
-    return () => clearInterval(bgInterval);
+  // Preload next image to eliminate transition flickering/loading delay
+  useEffect(() => {
+    const nextIndex = (bgIndex + 1) % hotelImages.length;
+    const img = new Image();
+    img.src = hotelImages[nextIndex].url;
+  }, [bgIndex]);
+
+  // Handle manual navigation actions with stable callbacks
+  const nextBg = useCallback(() => {
+    setBgIndex((prev) => (prev + 1) % hotelImages.length);
   }, []);
 
-  const nextBg = () => setBgIndex((prev) => (prev + 1) % hotelImages.length);
-  const prevBg = () => setBgIndex((prev) => (prev - 1 + hotelImages.length) % hotelImages.length);
+  const prevBg = useCallback(() => {
+    setBgIndex((prev) => (prev - 1 + hotelImages.length) % hotelImages.length);
+  }, []);
+
+  // Setup auto-advance interval with clean teardown
+  useEffect(() => {
+    const bgInterval = setInterval(nextBg, 6000);
+    return () => clearInterval(bgInterval);
+  }, [nextBg]);
 
   return (
     <section className="relative w-full min-h-[550px] sm:min-h-[620px] flex items-center justify-center overflow-hidden bg-slate-950 text-white py-16 sm:py-24 px-4 sm:px-6 lg:px-8 text-center rounded-b-[40px] shadow-lg mb-12">
       {/* Sliding Background Images */}
       <div className="absolute inset-0 z-0">
-        <AnimatePresence>
+        <AnimatePresence mode="popLayout">
           <motion.div
             key={bgIndex}
             initial={{ opacity: 0 }}
@@ -90,26 +103,30 @@ export default function HeroCarousel({ handleNavigate }: HeroCarouselProps) {
               alt={hotelImages[bgIndex].title}
               className="w-full h-full object-cover object-center filter brightness-105 contrast-105"
               referrerPolicy="no-referrer"
+              fetchPriority={bgIndex === 0 ? "high" : "auto"}
+              loading={bgIndex === 0 ? "eager" : "lazy"}
             />
           </motion.div>
         </AnimatePresence>
-        {/* Pure, clear premium gradient: preserves image quality and sharpness in the center, with soft shadow vignettes at the borders */}
+        {/* Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-black/10 to-black/80 z-10" />
       </div>
+
       {/* Hero Content Area */}
       <div className="relative z-20 max-w-4xl mx-auto flex flex-col items-center gap-6">
         <div className="inline-flex items-center gap-1.5 bg-black/40 border border-white/20 text-white/90 px-4 py-1.5 rounded-full text-xs font-accent uppercase tracking-widest backdrop-blur-md shadow-md">
           <Star className="w-3.5 h-3.5 fill-indigo-400 text-indigo-400 animate-pulse-slow" />
           Boutique Guest House • Sawla, Ethiopia
         </div>
-       
+        
         <h1 className="text-4xl sm:text-5xl md:text-6xl font-serif font-medium text-white tracking-tight leading-tight max-w-3xl drop-shadow-[0_4px_12px_rgba(0,0,0,0.85)]">
           Where Comfort Meets <span className="text-indigo-300 underline decoration-indigo-200 decoration-wavy underline-offset-4">Distinction</span>
         </h1>
-       
+        
         <p className="text-white text-sm sm:text-base md:text-lg font-mono leading-relaxed max-w-2xl bg-black/50 py-2.5 px-6 rounded-2xl backdrop-blur-md border border-white/10 shadow-xl">
           "Your Home Away from Home in the Heart of Sawla."
         </p>
+
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-4 w-full sm:w-auto">
           <button
             onClick={() => handleNavigate("BOOK_NOW", "/book-now")}
@@ -125,6 +142,7 @@ export default function HeroCarousel({ handleNavigate }: HeroCarouselProps) {
             Explore Rooms
           </button>
         </div>
+
         {/* Micro-controls and Current slide title */}
         <div className="mt-8 flex flex-col items-center gap-2">
           <p className="text-[10px] sm:text-xs font-accent text-slate-300 uppercase tracking-widest bg-slate-950/60 px-4 py-1.5 rounded-full backdrop-blur-md border border-white/10 shadow-sm">
