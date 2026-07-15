@@ -1,39 +1,30 @@
 import React from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Coffee, View } from "lucide-react";
+import { Trees, } from 'lucide-react';
 
 const sightseeingPlaces = [
   {
-    title: "Mt. Gughe Cloud Forests",
-    desc: "Trek up the tallest peaks of Gofa to witness cloud forest canopies, organic highland plantations, and majestic vistas of the Rift Valley.",
-    image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=800&q=80",
+    title: "Scenic Gofa Waterfall",
+    desc: "Experience the beauty of Gofa Zone's stunning waterfall, where flowing waters, lush greenery, and peaceful surroundings create an unforgettable destination for relaxation, photography, and nature exploration.",
+    image: "https://res.cloudinary.com/cpusqoyy/image/upload/f_auto,q_auto,dpr_auto,w_800,c_fill,g_auto/v1784137269/493893983_997121199286959_4080970400243918286_n_y1a3ka.jpg",
     tip: "Bring a light fleece as temperatures drop rapidly above 2,000m.",
-    altitude: "1,950m - 2,700m",
-    timeNeeded: "Full Day Tour"
+    altitude:  <Trees className="w-3.5 h-3.5" />,
   },
   {
     title: "Cultural Coffee Ceremony",
     desc: "Experience the deep aroma of slow-roasted Gofa Arabica beans, hand-poured in custom clay pots accompanied by freshly popped popcorn and local sweet-herbs.",
-    image: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=800&q=80",
+    image: "https://res.cloudinary.com/cpusqoyy/image/upload/f_auto,q_auto,w_1200,c_limit/v1783954647/2U0B0259_ban4j3.jpg",
     tip: "Accept at least three cups (Abol, Tona, Baraka) as custom dictates.",
-    altitude: "1,950m",
-    timeNeeded: "1 - 2 Hours"
+    altitude: <Coffee className="w-3.5 h-3.5" />,
   },
   {
-    title: "Sawla Highland Central Market",
+    title: "Panoramic Rooftop Terrace",
     desc: "An energetic open-air trading post where Gofa communities exchange handmade bamboo basketry, organic mountain spices, and traditional cotton shawls.",
-    image: "https://images.unsplash.com/photo-1533900298318-6b8da08a523e?auto=format&fit=crop&w=800&q=80",
-    tip: "Best visited on Tuesday and Saturday mornings when trading peaks.",
-    altitude: "1,940m",
-    timeNeeded: "Half Day Tour"
+    image:"https://res.cloudinary.com/cpusqoyy/image/upload/f_auto,q_auto:eco,dpr_auto,w_600,c_fill,g_auto/v1783940395/2U0B0277_wxdl6e.jpg",
+    tip: "Take in spectacular panoramic views of Sawla and the surrounding Gofa highlands from our elegant rooftop terrace—an ideal setting for morning coffee, evening relaxation, and unforgettable sunsets.",
+    altitude: <View className="w-3.5 h-3.5" />,
   },
-  {
-    title: "Dorze Bamboo Dome Village",
-    desc: "Behold the towering 12-meter bamboo structures resembling beehives, crafted by master Dorze weavers who preserve age-old spinning traditions.",
-    image: "https://images.unsplash.com/photo-1547989453-11e67ffb3885?auto=format&fit=crop&w=800&q=80",
-    tip: "Try the traditional Kocho flatbread prepared from false banana stalks.",
-    altitude: "2,400m",
-    timeNeeded: "Half Day Tour"
-  }
+
 ];
 
 export default function SightseeingCarousel() {
@@ -72,12 +63,25 @@ export default function SightseeingCarousel() {
                 className="bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm flex flex-col h-full hover:shadow-md transition-all duration-300"
               >
                 <div className="relative h-48 w-full overflow-hidden">
-                  <img
-                    src={place.image}
-                    alt={place.title}
-                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-                    referrerPolicy="no-referrer"
-                  />
+                 <img
+                      src={`${place.image.replace("/upload/", "/upload/w_800/")}`}
+                      srcSet={`
+                        ${place.image.replace("/upload/", "/upload/w_400/")} 400w,
+                        ${place.image.replace("/upload/", "/upload/w_768/")} 768w,
+                        ${place.image.replace("/upload/", "/upload/w_1200/")} 1200w
+                      `}
+                      sizes="
+                        (max-width: 640px) 100vw,
+                        (max-width: 1024px) 50vw,
+                        33vw
+                      "
+                      alt={place.title}
+                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                      loading="lazy"
+                      decoding="async"
+                      fetchPriority="low"
+                      referrerPolicy="no-referrer"
+                    />
                   <div className="absolute top-3 left-3 bg-indigo-600 text-white font-mono text-[10px] px-2.5 py-1 rounded-full font-bold shadow-sm">
                     {place.altitude}
                   </div>
@@ -92,17 +96,7 @@ export default function SightseeingCarousel() {
                       {place.desc}
                     </p>
                   </div>
-                  <div className="border-t border-slate-100 pt-4 flex justify-between items-center">
-                    <span className="text-[10px] font-mono text-slate-500 uppercase">
-                      🕒 {place.timeNeeded}
-                    </span>
-                    <button
-                      onClick={() => setSelectedSightseeing(place)}
-                      className="bg-amber-600/10 hover:bg-amber-600 text-amber-800 hover:text-white px-4 py-1.5 rounded text-xs font-mono transition-all font-semibold"
-                    >
-                      Read More
-                    </button>
-                  </div>
+                  
                 </div>
               </div>
             ))}
