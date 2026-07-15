@@ -55,6 +55,7 @@ model Booking {
   checkIn        DateTime
   checkOut       DateTime
   phone          String
+  email          String?
   status         String     @default("BOOKED") // "BOOKED", "CHECKED_IN", "CHECKED_OUT", "CANCELLED"
   paymentStatus  String     @default("PENDING") // "PENDING", "RECEIVED"
   totalPrice     Float

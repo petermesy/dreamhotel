@@ -2,6 +2,7 @@ import { z } from "zod";
 
 export const createBookingSchema = z.object({
   fullName: z.string().min(1, "Full name is required"),
+  email: z.string().email("A valid email address is required"),
   purpose: z.string().min(1, "Purpose of travel/stay is required"),
   address: z.string().min(1, "Address is required"),
   nationalId: z.string().min(1, "National ID / Passport Number is required"),
@@ -19,6 +20,7 @@ export const createBookingSchema = z.object({
 
 export const updateBookingDetailsSchema = z.object({
   fullName: z.string().optional(),
+  email: z.string().email("A valid email address is required").optional(),
   purpose: z.string().optional(),
   address: z.string().optional(),
   nationalId: z.string().optional(),

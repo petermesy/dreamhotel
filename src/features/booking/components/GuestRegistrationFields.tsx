@@ -1,5 +1,5 @@
 import React from "react";
-import { MapPin, CheckSquare, Phone } from "lucide-react";
+import { Mail, MapPin, CheckSquare, Phone } from "lucide-react";
 import type { BookingFormData } from "../types";
 
 interface GuestRegistrationFieldsProps {
@@ -27,7 +27,23 @@ export default function GuestRegistrationFields({ formData, onFieldChange }: Gue
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <label htmlFor="purpose" className="text-xs font-bold text-slate-700">Purpose of Stay * (Field 2)</label>
+        <label htmlFor="email" className="text-xs font-bold text-slate-700 flex items-center gap-1">
+          <Mail className="w-3.5 h-3.5 text-slate-400" />
+          Email Address * (Field 2)
+        </label>
+        <input
+          type="email"
+          id="email"
+          required
+          placeholder="e.g. guest@example.com"
+          value={formData.email}
+          onChange={(e) => onFieldChange("email", e.target.value)}
+          className="w-full bg-slate-50 border border-slate-200 focus:border-indigo-500 rounded-lg p-3 text-slate-950 outline-none transition-all"
+        />
+      </div>
+
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor="purpose" className="text-xs font-bold text-slate-700">Purpose of Stay * (Field 3)</label>
         <select
           id="purpose"
           required

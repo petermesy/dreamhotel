@@ -1,5 +1,6 @@
 export interface BookingFormData {
   fullName: string;
+  email: string;
   purpose: string;
   otherPurpose: string;
   address: string;

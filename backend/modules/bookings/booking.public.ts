@@ -5,6 +5,7 @@ import {
   updateBookingDetailsSchema,
   submitReceiptSchema
 } from "./booking.schemas.js";
+import { sendBookingConfirmationEmail } from "./booking.mail.js";
 import { ValidationError, NotFoundError, ConflictError, UnauthorizedError } from "../../core/errors.js";
 import { AuthenticatedRequest } from "../../core/middleware.js";
 
@@ -34,6 +35,7 @@ export async function createBooking(req: AuthenticatedRequest, res: Response) {
 
   const {
     fullName,
+    email,
     purpose,
     address,
     nationalId,
@@ -94,6 +96,7 @@ export async function createBooking(req: AuthenticatedRequest, res: Response) {
     data: {
       id: refCode,
       fullName,
+      email,
       purpose,
       address,
       nationalId,
@@ -110,6 +113,22 @@ export async function createBooking(req: AuthenticatedRequest, res: Response) {
     },
     include: { roomType: true, room: true }
   });
+
+  try {
+    await sendBookingConfirmationEmail({
+      id: booking.id,
+      fullName: booking.fullName,
+      email: booking.email,
+      roomTypeName: roomType.name,
+      roomNumber: availableRoom.roomNumber,
+      checkIn: booking.checkIn,
+      checkOut: booking.checkOut,
+      totalPrice: booking.totalPrice,
+      paymentStatus: booking.paymentStatus,
+    });
+  } catch (error) {
+    console.error("Failed to send booking confirmation email", error);
+  }
 
   res.status(201).json(booking);
 }
@@ -223,10 +242,11 @@ export async function updateBookingDetails(req: AuthenticatedRequest, res: Respo
     throw new NotFoundError("Booking not found");
   }
 
-  const { fullName, purpose, address, nationalId, phone, checkIn, checkOut, roomTypeId } = result.data;
+  const { fullName, purpose, address, nationalId, phone, email, checkIn, checkOut, roomTypeId } = result.data;
 
   const updateData: any = {};
   if (fullName !== undefined) updateData.fullName = fullName;
+  if (email !== undefined) updateData.email = email;
   if (purpose !== undefined) updateData.purpose = purpose;
   if (address !== undefined) updateData.address = address;
   if (nationalId !== undefined) updateData.nationalId = nationalId;

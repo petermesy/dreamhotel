@@ -36,6 +36,7 @@ export default function GuestRegistrationForm() {
 
   const [formData, setFormData] = React.useState<BookingFormData>({
     fullName: "",
+    email: "",
     purpose: "Leisure / Tourism",
     otherPurpose: "",
     address: "",
@@ -137,6 +138,7 @@ export default function GuestRegistrationForm() {
 
     const bookingPayload: Record<string, any> = {
       fullName: formData.fullName,
+      email: formData.email,
       purpose: finalPurpose,
       address: formData.address,
       nationalId: formData.nationalId,
@@ -167,6 +169,7 @@ export default function GuestRegistrationForm() {
       // Reset form
       setFormData({
         fullName: "",
+        email: "",
         purpose: "Leisure / Tourism",
         otherPurpose: "",
         address: "",
@@ -286,14 +289,7 @@ export default function GuestRegistrationForm() {
               </div>
             </div>
 
-            {/* Non-negotiable cash payment policy notice */}
-            <div className="bg-indigo-50 border border-indigo-200/60 text-indigo-955 p-4 rounded-xl text-left text-xs flex gap-3 shadow-inner">
-              <AlertCircle className="w-5 h-5 text-indigo-600 shrink-0 mt-0.5" />
-              <div>
-                <strong className="block text-indigo-900 mb-0.5">Payment Reminder</strong>
-                Booking confirmations instruct guests that payment is strictly collected in physical cash upon check-in at the property. No cards or mobile money transfers are integrated or allowed on-site.
-              </div>
-            </div>
+      
 
             {bookingError && (
               <div className="text-xs bg-rose-50 border border-rose-100 text-rose-700 p-4 rounded-xl font-bold flex items-center gap-2">
