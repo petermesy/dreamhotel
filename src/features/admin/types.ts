@@ -54,6 +54,14 @@ export interface UserDashboardProps {
   onUpdateBooking: (bookingId: string, updatedFields: any) => Promise<boolean>;
 }
 
+export interface ReservationPopupNotice {
+  title: string;
+  message: string;
+  variant?: "info" | "success" | "error";
+  confirmLabel?: string;
+  onConfirm?: () => void | Promise<void>;
+}
+
 export interface BackOfficeProps {
   userName: string;
   userRole: string;
@@ -82,6 +90,8 @@ export interface BackOfficeProps {
   staffSuccess: boolean;
   loading: boolean;
   error: string | null;
+  paymentPopupNotice: ReservationPopupNotice | null;
+  onDismissPaymentPopup: () => void;
   onGoToWebsite: () => void;
   onLogout: () => void;
   onSetAdminTab: (tab: "RESERVATIONS" | "STATS" | "STAFF" | "ROOMS_CONTROL" | "ENQUIRIES" | "GALLERY") => void;

@@ -53,6 +53,7 @@ export default function GuestRegistrationForm() {
   const [paymentMessage, setPaymentMessage] = React.useState("");
   const [paymentAttachmentName, setPaymentAttachmentName] = React.useState("");
   const [paymentAttachmentPreview, setPaymentAttachmentPreview] = React.useState<string | null>(null);
+  const [paymentProofError, setPaymentProofError] = React.useState<string | null>(null);
 
   // Default room types fallback if not loaded
   const localRoomTypes = roomTypes.length > 0 ? roomTypes : [
@@ -104,10 +105,12 @@ export default function GuestRegistrationForm() {
     if (!file) {
       setPaymentAttachmentName("");
       setPaymentAttachmentPreview(null);
+      setPaymentProofError(null);
       return;
     }
 
     setPaymentAttachmentName(file.name);
+    setPaymentProofError(null);
     const reader = new FileReader();
     reader.onload = () => {
       setPaymentAttachmentPreview(typeof reader.result === "string" ? reader.result : null);
@@ -119,6 +122,16 @@ export default function GuestRegistrationForm() {
     e.preventDefault();
     setLoading(true);
     dispatch(setBookingError(null));
+
+    const hasPaymentText = paymentMessage.trim().length > 0;
+    const hasPaymentAttachment = Boolean(paymentAttachmentName || paymentAttachmentPreview);
+    if (!hasPaymentText && !hasPaymentAttachment) {
+      setPaymentProofError("Please paste the payment SMS/text or attach a screenshot/receipt before confirming the booking.");
+      setLoading(false);
+      return;
+    }
+
+    setPaymentProofError(null);
 
     const finalPurpose = formData.purpose === "Other" ? formData.otherPurpose || "Other" : formData.purpose;
     const receiptText = [paymentMessage.trim(), paymentAttachmentName ? `Attached file: ${paymentAttachmentName}` : ""]
@@ -181,6 +194,7 @@ export default function GuestRegistrationForm() {
       setPaymentMessage("");
       setPaymentAttachmentName("");
       setPaymentAttachmentPreview(null);
+      setPaymentProofError(null);
       setAvailableCount(null);
     } catch (err: any) {
       dispatch(setBookingError(err.message));
@@ -272,13 +286,37 @@ export default function GuestRegistrationForm() {
                   Paste the SMS text or receipt from your CBE bank transfer or Telebirr payment below, or attach a screenshot/receipt image for immediate front-desk confirmation. If no payment receipt is sent within 12 hours, the reservation will be automatically cancelled.
                 </div>
 
+                <div className="rounded-lg border border-amber-200 bg-white/80 p-3">
+                  <div className="mb-2 text-[11px] font-bold uppercase tracking-wide text-amber-800">Payment Accounts</div>
+                  <div className="space-y-2 text-sm text-slate-700">
+                    <div className="flex items-center justify-between gap-3 rounded-md bg-slate-50 px-2.5 py-2">
+                      <span className="font-semibold text-slate-800">CBE</span>
+                      <span className="font-mono text-[12px]">1000 1234 5678</span>
+                    </div>
+                    <div className="flex items-center justify-between gap-3 rounded-md bg-slate-50 px-2.5 py-2">
+                      <span className="font-semibold text-slate-800">Telebirr</span>
+                    </div>
+                  </div>
+                </div>
+
                 <textarea
                   rows={4}
                   value={paymentMessage}
-                  onChange={(e) => setPaymentMessage(e.target.value)}
+                  onChange={(e) => {
+                    setPaymentMessage(e.target.value);
+                    if (e.target.value.trim()) {
+                      setPaymentProofError(null);
+                    }
+                  }}
                   placeholder="Paste the SMS text, transfer reference, amount, date, or other payment details here..."
                   className="w-full bg-white border border-amber-200 rounded-lg p-3 text-slate-800 outline-none resize-none"
                 />
+
+                {paymentProofError && (
+                  <div className="rounded-lg border border-rose-300 bg-rose-50 px-3 py-2 text-[12px] font-semibold text-rose-700">
+                    {paymentProofError}
+                  </div>
+                )}
 
                 <label className="flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-dashed border-amber-300 bg-white px-3 py-2.5 text-[11px] font-semibold text-amber-800 transition hover:bg-amber-100">
                   <Upload className="h-4 w-4" />

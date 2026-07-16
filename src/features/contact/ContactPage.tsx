@@ -19,16 +19,41 @@ export default function ContactPage() {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleContactSubmit = (e: React.FormEvent) => {
+  const handleContactSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setSuccess(false);
 
-    setTimeout(() => {
-      setLoading(false);
-      setSuccess(true);
+    try {
+      const response = await fetch("/api/enquiries", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          organization: formData.subject,
+          eventType: "Contact",
+          date: new Date().toISOString(),
+          estimatedAttendance: 1,
+          cateringRequirement: false,
+          message: `${formData.message}\n\nReply email: ${formData.email}`
+        })
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || "Failed to send your message.");
+      }
+
       setFormData({ name: "", email: "", subject: "", message: "" });
-      setTimeout(() => setSuccess(false), 6000);
-    }, 800);
+      setSuccess(true);
+      window.setTimeout(() => setSuccess(false), 6000);
+    } catch (err: unknown) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

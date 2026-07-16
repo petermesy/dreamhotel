@@ -49,7 +49,7 @@ export function useBackOfficePortal() {
     await fetchMyBookings();
   });
 
-  const { handleStatusChange, handleTogglePayment, handleCancelReservation, handleDeleteReservation } = useReservationActions(token, user?.role, async () => {
+  const { handleStatusChange, handleTogglePayment, handleCancelReservation, handleDeleteReservation, paymentPopupNotice, dismissPaymentPopup } = useReservationActions(token, user?.role, async () => {
     await fetchReservations(statusFilter, paymentFilter, searchTerm);
   });
 
@@ -152,6 +152,8 @@ export function useBackOfficePortal() {
     handleTogglePayment,
     handleCancelReservation,
     handleDeleteReservation,
+    paymentPopupNotice,
+    dismissPaymentPopup,
     handleCreateStaffSubmit,
     handleToggleStaffStatus,
     handleDeleteStaff,

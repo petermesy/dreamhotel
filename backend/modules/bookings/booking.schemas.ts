@@ -10,7 +10,7 @@ export const createBookingSchema = z.object({
   checkIn: z.string().min(1, "Check-in date is required"),
   checkOut: z.string().min(1, "Check-out date is required"),
   phone: z.string().min(1, "Phone number is required"),
-  paymentMessage: z.string().optional().nullable(),
+  paymentMessage: z.string().trim().min(1, "Payment receipt is required. Please paste the payment SMS/text or attach a screenshot/receipt before confirming the booking."),
   userId: z.union([z.number(), z.string()]).optional().nullable().transform((val) => {
     if (!val) return null;
     const parsed = typeof val === "string" ? parseInt(val, 10) : val;

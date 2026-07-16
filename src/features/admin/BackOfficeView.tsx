@@ -17,8 +17,52 @@ function BackOfficeSection(props: BackOfficeProps) {
     }
   }, [props.newBookingNotice]);
 
+  const renderPaymentPopup = () => {
+    if (!props.paymentPopupNotice) return null;
+    const notice = props.paymentPopupNotice;
+    const toneClasses = notice.variant === "error"
+      ? "border-rose-200 bg-rose-50 text-rose-700"
+      : notice.variant === "success"
+        ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+        : "border-indigo-200 bg-indigo-50 text-indigo-700";
+
+    return (
+      <div className="fixed inset-0 z-[70] flex items-center justify-center bg-slate-950/75 px-4 py-6">
+        <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-5 shadow-2xl">
+          <div className={`inline-flex rounded-full border px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide ${toneClasses}`}>
+            {notice.variant === "error" ? "Notice" : notice.variant === "success" ? "Success" : "Approval notice"}
+          </div>
+          <h3 className="mt-3 text-lg font-semibold text-slate-950">{notice.title}</h3>
+          <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-slate-600">{notice.message}</p>
+          <div className="mt-5 flex justify-end gap-2">
+            <button
+              type="button"
+              onClick={props.onDismissPaymentPopup}
+              className="rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+            >
+              Close
+            </button>
+            {notice.onConfirm && (
+              <button
+                type="button"
+                onClick={() => {
+                  props.onDismissPaymentPopup();
+                  void notice.onConfirm?.();
+                }}
+                className="rounded-lg bg-indigo-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700"
+              >
+                {notice.confirmLabel || "Confirm"}
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="w-full bg-slate-50 min-h-screen animate-fade-in">
+      {renderPaymentPopup()}
       <div className="bg-slate-950 text-white py-4 px-6 md:px-8 border-b border-slate-800 flex flex-col sm:flex-row justify-between items-center gap-4">
         <div className="flex items-center gap-3">
           <span className="text-sm font-bold text-slate-100">{props.userName} ({props.userRole})</span>
@@ -309,6 +353,8 @@ export default function BackOfficeView() {
       statusFilter={portal.statusFilter}
       paymentFilter={portal.paymentFilter}
       newBookingNotice={portal.newBookingNotice}
+      paymentPopupNotice={portal.paymentPopupNotice}
+      onDismissPaymentPopup={portal.dismissPaymentPopup}
       editingRoomTypeId={portal.editingRoomTypeId}
       editingRate={portal.editingRate}
       editingDescription={portal.editingDescription}

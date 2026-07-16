@@ -6,52 +6,52 @@ import { motion, AnimatePresence } from "motion/react";
 const hotelImages = [
   {
     url: "https://res.cloudinary.com/cpusqoyy/image/upload/f_auto,q_auto,dpr_auto,w_1920,c_fill,g_auto/v1783758085/0V1A3647_ivxcem.jpg",
-    title: "Elegant Boutique Rooms & Premium Guest Suites",
+    title: "Exterior View of building",
     subtitle: "A modern, highly safe, and serene environment welcoming you to Sawla",
   },
   {
     url: "https://res.cloudinary.com/cpusqoyy/image/upload/f_auto,q_auto,dpr_auto,w_1920,c_fill,g_auto/v1783760814/0V1A3628_tl0tdr.jpg",
-    title: "Luxury Queen Suite & Premium Linen",
+    title: "Exterior View of building",
     subtitle: "Experience bespoke comfort and meticulous custom room setups",
   },
   {
     url: "https://res.cloudinary.com/cpusqoyy/image/upload/f_auto,q_auto,dpr_auto,w_1920,c_fill,g_auto/v1783760813/0V1A3652_foedgo.jpg",
-    title: "Deluxe Modern Restrooms",
+    title: "Exterior View of building",
     subtitle: "Impeccably clean, fully-stocked, and safe private ensuite amenities",
   },
   {
     url: "https://res.cloudinary.com/cpusqoyy/image/upload/f_auto,q_auto,dpr_auto,w_1920,c_fill,g_auto/v1783760805/0V1A3496_c7npdk.jpg",
-    title: "The Executive Dining Room",
+    title: "Room",
     subtitle: "Savor gourmet meals and local culinary delicacies in absolute elegance",
   },
   {
     url: "https://res.cloudinary.com/cpusqoyy/image/upload/f_auto,q_auto,dpr_auto,w_1920,c_fill,g_auto/v1783760802/0V1A3580_lvirqe.jpg",
-    title: "Charming Boutique Guest Lounge",
+    title: "Conference Hall",
     subtitle: "Relax or network with colleagues in our warm, beautifully designed lounge",
   },
   {
     url: "https://res.cloudinary.com/cpusqoyy/image/upload/f_auto,q_auto,dpr_auto,w_1920,c_fill,g_auto/v1783760791/0V1A3568_bdc8wc.jpg",
-    title: "The Boardroom & Meeting Hub",
+    title: "Conference Hall",
     subtitle: "A fully equipped collaborative space optimized for corporate workshops and regional conferences",
   },
   {
     url: "https://res.cloudinary.com/cpusqoyy/image/upload/f_auto,q_auto,dpr_auto,w_1920,c_fill,g_auto/v1783760786/0V1A3615_jbyjae.jpg",
-    title: "Premium Double Deluxe Room",
+    title: "Reception Room",
     subtitle: "Cozy twin bed layouts optimized for business partners and travelers alike",
   },
   {
     url: "https://res.cloudinary.com/cpusqoyy/image/upload/f_auto,q_auto,dpr_auto,w_1920,c_fill,g_auto/v1783760844/0V1A3514_h8qh72.jpg",
-    title: "Fine Dining & Breakfast Bar",
+    title: "Premium Double Deluxe Room",
     subtitle: "Enjoy refreshing beverages and exquisite dishes prepared daily by our chefs",
   },
   {
     url: "https://res.cloudinary.com/cpusqoyy/image/upload/f_auto,q_auto,dpr_auto,w_1920,c_fill,g_auto/v1783760850/0V1A3535_i1ceqd.jpg",
-    title: "Boutique Cafe & Refreshment Hub",
+    title: "Luxury Queen Suite & Premium",
     subtitle: "Sip outstanding local coffee blends and fresh mocktails in a welcoming environment",
   },
   {
     url: "https://res.cloudinary.com/cpusqoyy/image/upload/f_auto,q_auto,dpr_auto,w_1920,c_fill,g_auto/v1783760835/0V1A3533_hntj6e.jpg",
-    title: "Modern Workspace Lounge",
+    title: "Luxury Queen Suite & Premium",
     subtitle: "Productive breakout seating areas designed specifically for business remote professionals",
   },
 ];

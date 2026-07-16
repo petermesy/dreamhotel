@@ -119,32 +119,69 @@ npx http-server dist -p 5173
 npx http-server dist -p 5173
 ```
 
-### Build backend only
+### Build and start in production
+
+#### 1. Install dependencies
+
+```bash
+npm install
+```
+
+#### 2. Build the app
+
+```bash
+npm run build
+```
+
+This builds the frontend into `dist/` and the backend into `dist/server.cjs`.
+
+#### 3. Start the app with PM2
+
+If you have an ecosystem file configured, start all processes with:
+
+```bash
+pm2 start ecosystem.config.cjs
+```
+
+If you are starting the built backend directly, use:
 
 #### macOS / Linux
 
 ```bash
-npx esbuild server.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/server.cjs
+NODE_ENV=production PORT=3000 pm2 start node --name dream-hotel-backend -- dist/server.cjs
 ```
 
 #### Windows PowerShell
 
 ```powershell
-npx esbuild server.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/server.cjs
+$env:NODE_ENV='production'; $env:PORT='3000'; pm2 start node --name dream-hotel-backend -- dist/server.cjs
 ```
 
-### Run production server
-
-#### macOS / Linux
+#### 4. Check PM2 status
 
 ```bash
-NODE_ENV=production PORT=3000 node dist/server.cjs
+pm2 status
 ```
 
-#### Windows PowerShell
+#### 5. View logs
 
-```powershell
-$env:NODE_ENV='production'; $env:PORT='3000'; node dist/server.cjs
+```bash
+pm2 logs dream-hotel-backend
+```
+
+#### 6. Restart or stop the process
+
+```bash
+pm2 restart dream-hotel-backend
+pm2 stop dream-hotel-backend
+pm2 delete dream-hotel-backend
+```
+
+#### 7. Save PM2 processes for reboot
+
+```bash
+pm2 save
+pm2 startup
 ```
 
 ---

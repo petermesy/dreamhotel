@@ -1,6 +1,13 @@
 import React from "react";
+import type { ReservationPopupNotice } from "../types";
 
 export function useReservationActions(token: string | null, userRole: string | undefined, refreshReservations: () => Promise<void>) {
+  const [paymentPopupNotice, setPaymentPopupNotice] = React.useState<ReservationPopupNotice | null>(null);
+
+  const dismissPaymentPopup = React.useCallback(() => {
+    setPaymentPopupNotice(null);
+  }, []);
+
   const handleStatusChange = React.useCallback(async (id: string, newStatus: string) => {
     if (!token) return;
     const res = await fetch(`/api/admin/reservations/${id}/status`, {
@@ -14,18 +21,41 @@ export function useReservationActions(token: string | null, userRole: string | u
   const handleTogglePayment = React.useCallback(async (id: string, currentPaymentStatus: string) => {
     if (!token) return;
     if (currentPaymentStatus === "RECEIVED") {
-      window.alert("This payment has already been marked as received and cannot be changed back to pending.");
+      setPaymentPopupNotice({
+        title: "Payment already received",
+        message: "This payment has already been marked as received and cannot be changed back to pending.",
+        variant: "error"
+      });
       return;
     }
 
-    const nextStatus = "RECEIVED";
-    if (!window.confirm("Confirm cash collection? Update status to Received?")) return;
-    const res = await fetch(`/api/admin/reservations/${id}/payment`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-      body: JSON.stringify({ paymentStatus: nextStatus })
+    setPaymentPopupNotice({
+      title: "Approve payment",
+      message: "Confirm cash collection? Update status to Received?",
+      variant: "info",
+      confirmLabel: "Approve payment",
+      onConfirm: async () => {
+        const res = await fetch(`/api/admin/reservations/${id}/payment`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ paymentStatus: "RECEIVED" })
+        });
+        if (res.ok) {
+          await refreshReservations();
+          setPaymentPopupNotice({
+            title: "Payment approved",
+            message: "Payment status updated to RECEIVED.",
+            variant: "success"
+          });
+        } else {
+          setPaymentPopupNotice({
+            title: "Approval failed",
+            message: "Unable to update the payment status. Please try again.",
+            variant: "error"
+          });
+        }
+      }
     });
-    if (res.ok) await refreshReservations();
   }, [refreshReservations, token]);
 
   const handleCancelReservation = React.useCallback(async (id: string) => {
@@ -41,5 +71,5 @@ export function useReservationActions(token: string | null, userRole: string | u
     if (res.ok) await refreshReservations();
   }, [refreshReservations, token, userRole]);
 
-  return { handleStatusChange, handleTogglePayment, handleCancelReservation, handleDeleteReservation };
+  return { handleStatusChange, handleTogglePayment, handleCancelReservation, handleDeleteReservation, paymentPopupNotice, dismissPaymentPopup };
 }
