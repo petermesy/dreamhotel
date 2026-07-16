@@ -62,12 +62,16 @@ interface HeroCarouselProps {
 
 export default function HeroCarousel({ handleNavigate }: HeroCarouselProps) {
   const [bgIndex, setBgIndex] = useState(0);
+  const currentImage = hotelImages[bgIndex] ?? hotelImages[0] ?? { url: "", title: "" };
 
   // Preload next image to eliminate transition flickering/loading delay
   useEffect(() => {
     const nextIndex = (bgIndex + 1) % hotelImages.length;
-    const img = new Image();
-    img.src = hotelImages[nextIndex].url;
+    const nextImage = hotelImages[nextIndex];
+    if (nextImage) {
+      const img = new Image();
+      img.src = nextImage.url;
+    }
   }, [bgIndex]);
 
   // Handle manual navigation actions with stable callbacks
@@ -99,8 +103,8 @@ export default function HeroCarousel({ handleNavigate }: HeroCarouselProps) {
             className="absolute inset-0"
           >
             <img
-              src={hotelImages[bgIndex].url}
-              alt={hotelImages[bgIndex].title}
+              src={currentImage.url}
+              alt={currentImage.title}
               className="w-full h-full object-cover object-center filter brightness-105 contrast-105"
               referrerPolicy="no-referrer"
               fetchPriority={bgIndex === 0 ? "high" : "auto"}
@@ -146,7 +150,7 @@ export default function HeroCarousel({ handleNavigate }: HeroCarouselProps) {
         {/* Micro-controls and Current slide title */}
         <div className="mt-8 flex flex-col items-center gap-2">
           <p className="text-[10px] sm:text-xs font-accent text-slate-300 uppercase tracking-widest bg-slate-950/60 px-4 py-1.5 rounded-full backdrop-blur-md border border-white/10 shadow-sm">
-            Current View: <span className="text-indigo-300 font-bold">{hotelImages[bgIndex].title}</span>
+            Current View: <span className="text-indigo-300 font-bold">{currentImage.title}</span>
           </p>
           <div className="flex items-center gap-3 mt-1">
             <button

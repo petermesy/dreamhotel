@@ -17,9 +17,9 @@ export default function ReceiptPanel({
   onCancelBooking,
 }: ReceiptPanelProps) {
   const paymentText = booking.paymentMessage || "";
-  const imageSources = React.useMemo(() => {
-    const matches = paymentText.match(/data:image\/[a-zA-Z0-9.+-]+;base64,[^\s]+/g) || [];
-    return Array.from(new Set(matches));
+  const imageSources = React.useMemo<string[]>(() => {
+    const matches: string[] = paymentText.match(/data:image\/[a-zA-Z0-9.+-]+;base64,[^\s]+/g) ?? [];
+    return Array.from(new Set<string>(matches));
   }, [paymentText]);
 
   const displayText = React.useMemo(() => {

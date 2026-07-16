@@ -44,14 +44,18 @@ export async function createStaffAccount(req: AuthenticatedRequest, res: Respons
 
 export async function updateStaffStatus(req: AuthenticatedRequest, res: Response) {
   const { id } = req.params;
+  if (!id) {
+    throw new ValidationError("Invalid staff ID");
+  }
+
   const result = updateStaffStatusSchema.safeParse(req.body);
   if (!result.success) {
     throw new ValidationError("Invalid status value", result.error.flatten().fieldErrors);
   }
 
   const { status } = result.data;
-  const targetUserId = parseInt(id, 10);
-  if (isNaN(targetUserId)) {
+  const targetUserId = Number.parseInt(id, 10);
+  if (!Number.isInteger(targetUserId)) {
     throw new ValidationError("Invalid staff ID");
   }
 
@@ -69,8 +73,12 @@ export async function updateStaffStatus(req: AuthenticatedRequest, res: Response
 
 export async function deleteStaffAccount(req: AuthenticatedRequest, res: Response) {
   const { id } = req.params;
-  const targetUserId = parseInt(id, 10);
-  if (isNaN(targetUserId)) {
+  if (!id) {
+    throw new ValidationError("Invalid staff ID");
+  }
+
+  const targetUserId = Number.parseInt(id, 10);
+  if (!Number.isInteger(targetUserId)) {
     throw new ValidationError("Invalid staff ID");
   }
 

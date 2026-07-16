@@ -37,7 +37,7 @@ export default function HomeHero() {
       
       <SubscribeSection />
       
-      <SightseeingModal />
+      <SightseeingModal selectedSightseeing={null} onClose={() => undefined} />
     </div>
   );
 }

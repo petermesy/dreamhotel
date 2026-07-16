@@ -26,6 +26,14 @@ export default function GuestDashboard(props: UserDashboardProps) {
     roomTypeId: ""
   });
 
+  const toDateInputValue = (value: string | Date | null | undefined): string => {
+    if (!value) return "";
+    const date = value instanceof Date ? value : new Date(value);
+    if (Number.isNaN(date.getTime())) return "";
+    const [datePart] = date.toISOString().split("T");
+    return datePart ?? "";
+  };
+
   const handleStartEdit = (booking: any) => {
     setEditingBookingId(booking.id);
     setEditForm({
@@ -34,8 +42,8 @@ export default function GuestDashboard(props: UserDashboardProps) {
       purpose: booking.purpose || "",
       nationalId: booking.nationalId || "",
       address: booking.address || "",
-      checkIn: booking.checkIn ? new Date(booking.checkIn).toISOString().split("T")[0] : "",
-      checkOut: booking.checkOut ? new Date(booking.checkOut).toISOString().split("T")[0] : "",
+      checkIn: toDateInputValue(booking.checkIn),
+      checkOut: toDateInputValue(booking.checkOut),
       roomTypeId: booking.roomTypeId || ""
     });
   };

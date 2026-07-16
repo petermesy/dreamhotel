@@ -1,3 +1,12 @@
+interface CloudinaryOptions {
+  format?: string;
+  quality?: string;
+  dpr?: string | number;
+  width?: number;
+  crop?: string;
+  gravity?: string;
+}
+
 export function optimizeCloudinaryUrl(url: string, opts: CloudinaryOptions = {}): string {
   if (!url || typeof url !== "string" || !url.includes("res.cloudinary.com")) {
     return url;

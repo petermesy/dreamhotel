@@ -40,15 +40,19 @@ export async function getEnquiries(_req: AuthenticatedRequest, res: Response) {
 // Update Enquiry Status (Admin/Staff)
 export async function updateEnquiryStatus(req: AuthenticatedRequest, res: Response) {
   const { id } = req.params;
+  if (!id) {
+    throw new ValidationError("Invalid enquiry ID");
+  }
+
   const result = updateEnquiryStatusSchema.safeParse(req.body);
   if (!result.success) {
     throw new ValidationError("Invalid enquiry status update", result.error.flatten().fieldErrors);
   }
 
   const { status } = result.data;
-  const enquiryId = parseInt(id, 10);
+  const enquiryId = Number.parseInt(id, 10);
 
-  if (isNaN(enquiryId)) {
+  if (!Number.isInteger(enquiryId)) {
     throw new ValidationError("Invalid enquiry ID");
   }
 

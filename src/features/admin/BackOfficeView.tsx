@@ -45,7 +45,8 @@ function ReservationsTab(props: BackOfficeProps) {
 
   const renderPaymentCell = (booking: any) => {
     const paymentText = booking.paymentMessage || "";
-    const imageSources = Array.from(new Set(paymentText.match(/data:image\/[a-zA-Z0-9.+-]+;base64,[^\s]+/g) || []));
+    const matches = paymentText.match(/data:image\/[a-zA-Z0-9.+-]+;base64,[^\s]+/g) ?? [];
+    const imageSources: string[] = Array.from(new Set(matches));
     const displayText = paymentText
       .replace(/\[ATTACHMENT_PREVIEW\]/gi, "")
       .replace(/data:image\/[a-zA-Z0-9.+-]+;base64,[^\s]+/g, "")

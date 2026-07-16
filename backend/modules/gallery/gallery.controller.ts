@@ -104,9 +104,13 @@ export async function createGalleryImage(req: AuthenticatedRequest, res: Respons
 // Update Gallery Image (Reception / Admin)
 export async function updateGalleryImage(req: AuthenticatedRequest, res: Response) {
   const { id } = req.params;
-  const imageId = parseInt(id, 10);
+  if (!id) {
+    throw new ValidationError("Invalid gallery image ID");
+  }
 
-  if (isNaN(imageId)) {
+  const imageId = Number.parseInt(id, 10);
+
+  if (!Number.isInteger(imageId)) {
     throw new ValidationError("Invalid gallery image ID");
   }
 
@@ -151,9 +155,13 @@ export async function updateGalleryImage(req: AuthenticatedRequest, res: Respons
 // Delete Gallery Image (Reception / Admin)
 export async function deleteGalleryImage(req: AuthenticatedRequest, res: Response) {
   const { id } = req.params;
-  const imageId = parseInt(id, 10);
+  if (!id) {
+    throw new ValidationError("Invalid gallery image ID");
+  }
 
-  if (isNaN(imageId)) {
+  const imageId = Number.parseInt(id, 10);
+
+  if (!Number.isInteger(imageId)) {
     throw new ValidationError("Invalid gallery image ID");
   }
 

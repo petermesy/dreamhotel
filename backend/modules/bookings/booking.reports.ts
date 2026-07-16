@@ -84,11 +84,11 @@ export async function getMonthlyReports(_req: AuthenticatedRequest, res: Respons
     }
   }
 
-  const report = Object.keys(monthsData).map(month => ({
+  const report = Object.entries(monthsData).map(([month, monthData]) => ({
     month,
-    revenue: monthsData[month].revenue,
-    bookingsCount: monthsData[month].bookingsCount,
-    occupiedNights: monthsData[month].occupiedNights,
+    revenue: monthData.revenue,
+    bookingsCount: monthData.bookingsCount,
+    occupiedNights: monthData.occupiedNights,
   }));
 
   res.json(report);

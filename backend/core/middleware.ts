@@ -19,7 +19,15 @@ async function resolveAuthenticatedUser(token: string): Promise<AuthenticatedUse
   const legacyParts = token.split(":");
   if (legacyParts.length === 4) {
     const [userIdStr, role, email] = legacyParts;
-    const userId = parseInt(userIdStr, 10);
+    if (!userIdStr || !role || !email) {
+      return null;
+    }
+
+    const userId = Number.parseInt(userIdStr, 10);
+    if (!Number.isInteger(userId)) {
+      return null;
+    }
+
     const user = await prisma.user.findUnique({ where: { id: userId } });
 
     if (!user || user.status !== "ACTIVE" || user.role !== role || user.email !== email) {
