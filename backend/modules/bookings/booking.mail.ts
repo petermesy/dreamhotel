@@ -102,6 +102,46 @@ export async function sendBookingConfirmationEmail(booking: BookingEmailPayload)
   });
 }
 
+export async function sendPaymentApprovedEmail(booking: BookingEmailPayload) {
+  const toEmail = booking.email?.trim();
+  const fromAddress = process.env.SMTP_FROM || process.env.MAIL_FROM || "reservations@dreamhotelsawla.com";
+  const transporter = createTransporter();
+
+  if (!toEmail || !transporter) {
+    console.info("Email transport is not configured; skipping payment approval email.");
+    return;
+  }
+
+  const roomTypeName = booking.roomTypeName || booking.roomType?.name || "Selected room";
+  const roomNumber = booking.roomNumber || booking.room?.roomNumber || "TBD";
+
+  const html = `
+    <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #0f172a;">
+      <h2 style="color: #15803d;">Payment Approved</h2>
+      <p>Hello ${booking.fullName},</p>
+      <p>Your payment has been approved. Your reservation is now confirmed.</p>
+      <ul>
+        <li><strong>Reference:</strong> ${booking.id}</li>
+        <li><strong>Room:</strong> ${roomNumber}</li>
+        <li><strong>Room Type:</strong> ${roomTypeName}</li>
+        <li><strong>Check-in:</strong> ${formatDate(booking.checkIn)}</li>
+        <li><strong>Check-out:</strong> ${formatDate(booking.checkOut)}</li>
+        <li><strong>Estimated Quote:</strong> ETB ${booking.totalPrice.toLocaleString()}</li>
+      </ul>
+      <p>Please keep this reference for check-in.</p>
+      <p>Thank you for choosing Dream Hotel.</p>
+    </div>
+  `;
+
+  await transporter.sendMail({
+    from: fromAddress,
+    to: toEmail,
+    subject: `Payment Approved - ${booking.id}`,
+    html,
+    text: `Hello ${booking.fullName},\n\nYour payment has been approved. Your reservation is now confirmed.\nReference: ${booking.id}\nRoom: ${roomNumber}\nRoom Type: ${roomTypeName}\nCheck-in: ${formatDate(booking.checkIn)}\nCheck-out: ${formatDate(booking.checkOut)}\nEstimated Quote: ETB ${booking.totalPrice.toLocaleString()}\n\nPlease keep this reference for check-in.\n\nThank you for choosing Dream Hotel.`,
+  });
+}
+
 export async function sendBookingAdminNotificationEmail(booking: BookingEmailPayload) {
   const adminRecipients = getAdminRecipients();
   const fromAddress = process.env.SMTP_FROM || process.env.MAIL_FROM || "reservations@dreamhotelsawla.com";

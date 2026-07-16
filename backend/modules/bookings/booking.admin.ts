@@ -6,6 +6,7 @@ import {
 } from "./booking.schemas.js";
 import { ValidationError, NotFoundError, UnauthorizedError } from "../../core/errors.js";
 import { AuthenticatedRequest } from "../../core/middleware.js";
+import { sendPaymentApprovedEmail } from "./booking.mail.js";
 
 export async function getReservations(req: AuthenticatedRequest, res: Response) {
   const { status, paymentStatus, search } = req.query;
@@ -69,6 +70,10 @@ export async function updatePaymentStatus(req: AuthenticatedRequest, res: Respon
     throw new NotFoundError("Booking not found");
   }
 
+  if (booking.paymentStatus === "RECEIVED" && paymentStatus === "PENDING") {
+    throw new ValidationError("This payment has already been marked as received and cannot be changed back to pending.");
+  }
+
   const staffUser = req.user;
   if (!staffUser) {
     throw new UnauthorizedError("Authentication required");
@@ -77,8 +82,28 @@ export async function updatePaymentStatus(req: AuthenticatedRequest, res: Respon
   const updated = await prisma.booking.update({
     where: { id },
     data: { paymentStatus },
-    include: { roomType: true }
+    include: { roomType: true, room: true }
   });
+
+  if (paymentStatus === "RECEIVED" && booking.paymentStatus !== "RECEIVED") {
+    try {
+      await sendPaymentApprovedEmail({
+        id: updated.id,
+        fullName: updated.fullName,
+        email: updated.email,
+        roomTypeName: updated.roomType?.name,
+        roomNumber: updated.roomNumber,
+        checkIn: updated.checkIn,
+        checkOut: updated.checkOut,
+        totalPrice: updated.totalPrice,
+        paymentStatus: updated.paymentStatus,
+        roomType: updated.roomType,
+        room: updated.room,
+      });
+    } catch (error) {
+      console.error("Failed to send payment approval email", error);
+    }
+  }
 
   await prisma.auditLog.create({
     data: {

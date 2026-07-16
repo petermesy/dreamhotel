@@ -13,8 +13,13 @@ export function useReservationActions(token: string | null, userRole: string | u
 
   const handleTogglePayment = React.useCallback(async (id: string, currentPaymentStatus: string) => {
     if (!token) return;
-    const nextStatus = currentPaymentStatus === "PENDING" ? "RECEIVED" : "PENDING";
-    if (nextStatus === "RECEIVED" && !window.confirm("Confirm cash collection? Update status to Received?")) return;
+    if (currentPaymentStatus === "RECEIVED") {
+      window.alert("This payment has already been marked as received and cannot be changed back to pending.");
+      return;
+    }
+
+    const nextStatus = "RECEIVED";
+    if (!window.confirm("Confirm cash collection? Update status to Received?")) return;
     const res = await fetch(`/api/admin/reservations/${id}/payment`, {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
