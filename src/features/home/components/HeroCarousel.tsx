@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { ArrowRight, Star } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
-export const hotelImages = [
+const hotelImages = [
   {
     url: "https://res.cloudinary.com/cpusqoyy/image/upload/f_auto,q_auto,dpr_auto,w_1920,c_fill,g_auto/v1783758085/0V1A3647_ivxcem.jpg",
     title: "Elegant Boutique Rooms & Premium Guest Suites",

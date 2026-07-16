@@ -90,13 +90,7 @@ function AppContent() {
           </div>
 
           {/* Guidelines */}
-          <div>
-            <h5 className="text-white font-sans font-bold mb-3 text-sm">Payment Policy</h5>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              No online card transactions or third-party digital banking operations apply. All payments are strictly settled in cash at checkout or upon check-in.
-            </p>
-          </div>
-
+     
           {/* Regulatory */}
           <div>
             <h5 className="text-white font-sans font-bold mb-3 text-sm">Regulatory Alignment</h5>

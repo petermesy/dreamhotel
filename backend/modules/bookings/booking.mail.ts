@@ -67,7 +67,7 @@ export async function sendBookingConfirmationEmail(booking: BookingEmailPayload)
         <li><strong>Check-out:</strong> ${formatDate(booking.checkOut)}</li>
         <li><strong>Estimated Quote:</strong> ETB ${booking.totalPrice.toLocaleString()}</li>
       </ul>
-      <p>Please send your CBE / Telebirr payment receipt within 12 hours of booking so we can verify the reservation. If no payment receipt is shared in time, the reservation will be cancelled automatically.</p>
+      <p>You will be notified soon when your payment is approved.</p>
       <p>Thank you for choosing Dream Hotel.</p>
       <p style="font-size: 12px; color: #64748b;">Sent from reservations@dreamhotelsawla.com</p>
     </div>
@@ -78,6 +78,6 @@ export async function sendBookingConfirmationEmail(booking: BookingEmailPayload)
     to: toEmail,
     subject: `Dream Hotel Reservation Confirmation - ${booking.id}`,
     html,
-    text: `Hello ${booking.fullName},\n\nYour reservation request has been received and confirmed.\nReference: ${booking.id}\nRoom: ${roomNumber}\nRoom Type: ${roomTypeName}\nCheck-in: ${formatDate(booking.checkIn)}\nCheck-out: ${formatDate(booking.checkOut)}\nEstimated Quote: ETB ${booking.totalPrice.toLocaleString()}\n\nPlease send your CBE / Telebirr payment receipt within 12 hours of booking. If no payment receipt is shared in time, the reservation will be cancelled automatically.\n\nThank you for choosing Dream Hotel.`,
+    text: `Hello ${booking.fullName},\n\nYour reservation request has been received and confirmed.\nReference: ${booking.id}\nRoom: ${roomNumber}\nRoom Type: ${roomTypeName}\nCheck-in: ${formatDate(booking.checkIn)}\nCheck-out: ${formatDate(booking.checkOut)}\nEstimated Quote: ETB ${booking.totalPrice.toLocaleString()}\n\nYou will be notified soon when your payment is approved.\n\nThank you for choosing Dream Hotel.`,
   });
 }

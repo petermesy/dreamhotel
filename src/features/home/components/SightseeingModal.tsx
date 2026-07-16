@@ -3,7 +3,7 @@ import { X } from "lucide-react";
 import { motion } from "motion/react";
 
 // Moved outside the component to prevent re-creation on every render
-export const sightseeingPlaces = [
+const sightseeingPlaces = [
   {
     title: "Mt. Gughe Cloud Forests",
     desc: "Trek up the tallest peaks of Gofa to witness cloud forest canopies, organic highland plantations, and majestic vistas of the Rift Valley.",

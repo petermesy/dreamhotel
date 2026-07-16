@@ -36,15 +36,12 @@ const authSlice = createSlice({
       state.error = null;
       localStorage.removeItem("dp_token");
       localStorage.removeItem("dp_user");
-    },
-    setAuthError: (state, action: PayloadAction<string>) => {
-      state.error = action.payload;
     }
   }
 });
 
 // --- UI VIEW SLICE ---
-export type ActiveTab = "HOME" | "ROOMS" | "CONFERENCE" | "ABOUT" | "CONTACT" | "BOOK_NOW" | "LOOKUP" | "ADMIN" | "MY_BOOKINGS" | "GALLERY";
+type ActiveTab = "HOME" | "ROOMS" | "CONFERENCE" | "ABOUT" | "CONTACT" | "BOOK_NOW" | "LOOKUP" | "ADMIN" | "MY_BOOKINGS" | "GALLERY";
 
 interface UIState {
   currentTab: ActiveTab;
@@ -144,7 +141,7 @@ const adminSlice = createSlice({
 });
 
 // EXPORTS
-export const { loginSuccess, logout, setAuthError } = authSlice.actions;
+export const { loginSuccess, logout } = authSlice.actions;
 export const { setTab, setAdminTab } = uiSlice.actions;
 export const { setRoomTypes, setRoomTypesLoading, selectRoomType, setBookingSuccess, setBookingError } = coreSlice.actions;
 export const { setAdminData, setAdminLoading, setAdminError } = adminSlice.actions;
@@ -159,4 +156,4 @@ export const store = configureStore({
 });
 
 export type RootState = ReturnType<typeof store.getState>;
-export type AppDispatch = typeof store.dispatch;
+type AppDispatch = typeof store.dispatch;

@@ -33,12 +33,7 @@ export default function Footer() {
         </div>
 
         {/* Guidelines */}
-        <div>
-          <h5 className="text-white font-sans font-bold mb-3 text-xs">Payment Policy</h5>
-          <p className="text-[10px] text-slate-500 leading-relaxed">
-            No online card transactions or third-party digital banking operations apply. All payments are strictly settled in cash at checkout or upon check-in.
-          </p>
-        </div>
+     
 
         {/* Regulatory */}
         <div>

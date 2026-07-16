@@ -107,6 +107,6 @@ export interface BackOfficeProps {
   onToggleEnquiryStatus: (enquiryId: number, currentStatus: string) => void;
 }
 
-export interface SectionProps {
+interface SectionProps {
   children?: ReactNode;
 }
