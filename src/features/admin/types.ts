@@ -70,6 +70,7 @@ export interface BackOfficeProps {
   searchTerm: string;
   statusFilter: string;
   paymentFilter: string;
+  newBookingNotice: string | null;
   editingRoomTypeId: string | null;
   editingRate: string;
   editingDescription: string;
@@ -87,6 +88,7 @@ export interface BackOfficeProps {
   onSearchTermChange: (value: string) => void;
   onStatusFilterChange: (value: string) => void;
   onPaymentFilterChange: (value: string) => void;
+  onDismissNewBookingNotice: () => void;
   onStatusChange: (id: string, newStatus: string) => void;
   onTogglePayment: (id: string, currentPaymentStatus: string) => void;
   onCancelReservation: (id: string) => void;

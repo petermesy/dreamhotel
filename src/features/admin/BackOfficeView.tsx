@@ -1,7 +1,7 @@
 import React from "react";
 import { useDispatch } from "react-redux";
 import { setAdminTab, setTab } from "../../store";
-import { LogOut, Plus, Trash2 } from "lucide-react";
+import { Bell, LogOut, Plus, Trash2, X } from "lucide-react";
 import { useBackOfficePortal } from "./useBackOfficePortal";
 import AdminLoginSection from "./AdminLoginSection";
 import GuestDashboard from "./GuestDashboard";
@@ -9,18 +9,75 @@ import GalleryTab from "./GalleryTab";
 import type { BackOfficeProps } from "./types";
 
 function BackOfficeSection(props: BackOfficeProps) {
+  const [showNotifications, setShowNotifications] = React.useState(false);
+
+  React.useEffect(() => {
+    if (props.newBookingNotice) {
+      setShowNotifications(true);
+    }
+  }, [props.newBookingNotice]);
+
   return (
     <div className="w-full bg-slate-50 min-h-screen animate-fade-in">
       <div className="bg-slate-950 text-white py-4 px-6 md:px-8 border-b border-slate-800 flex flex-col sm:flex-row justify-between items-center gap-4">
         <div className="flex items-center gap-3">
           <span className="text-sm font-bold text-slate-100">{props.userName} ({props.userRole})</span>
         </div>
-        <div className="flex gap-3">
+        <div className="flex items-center gap-3">
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setShowNotifications((prev) => !prev)}
+              className="relative rounded-lg border border-slate-800 bg-slate-900 p-2.5 text-slate-200 transition hover:border-slate-700 hover:bg-slate-800"
+              aria-label="Toggle booking notifications"
+            >
+              <Bell className="h-4 w-4" />
+              {props.newBookingNotice && (
+                <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-amber-500 text-[10px] font-bold text-slate-950">
+                  !
+                </span>
+              )}
+            </button>
+            {showNotifications && (
+              <div className="absolute right-0 z-20 mt-2 w-72 rounded-xl border border-slate-700 bg-slate-900 p-3 text-sm shadow-2xl">
+                <div className="mb-2 flex items-center justify-between">
+                  <span className="text-[11px] font-bold uppercase tracking-wide text-slate-300">Booking alerts</span>
+                  <button
+                    type="button"
+                    onClick={() => setShowNotifications(false)}
+                    className="rounded-full p-1 text-slate-400 transition hover:bg-slate-800 hover:text-white"
+                    aria-label="Close booking notifications"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+                <div className="rounded-lg border border-slate-800 bg-slate-950/70 p-2 text-slate-300">
+                  {props.newBookingNotice ? props.newBookingNotice : "No new booking notifications yet."}
+                </div>
+              </div>
+            )}
+          </div>
           <button onClick={props.onGoToWebsite} className="text-xs font-mono font-medium border border-slate-800 hover:border-slate-700 bg-slate-900 text-slate-200 px-4 py-2 rounded-lg cursor-pointer transition-all active:scale-95 font-sans">Go to Website</button>
           <button onClick={props.onLogout} className="text-xs font-mono font-bold bg-indigo-600 hover:bg-indigo-750 text-white px-4 py-2 rounded-lg flex items-center gap-1.5 cursor-pointer transition-all active:scale-95 font-sans"><LogOut className="w-3.5 h-3.5" />Logout</button>
         </div>
       </div>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {props.newBookingNotice && (
+          <div className="mb-4 flex items-start justify-between gap-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900 shadow-sm">
+            <div className="flex items-start gap-2">
+              <Bell className="mt-0.5 h-4 w-4 shrink-0" />
+              <span>{props.newBookingNotice}</span>
+            </div>
+            <button
+              type="button"
+              onClick={props.onDismissNewBookingNotice}
+              className="rounded-full p-1 text-amber-700 transition hover:bg-amber-100"
+              aria-label="Dismiss booking notification"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+        )}
         <div className="flex flex-wrap gap-2 mb-8 border-b border-slate-200 pb-4 font-mono text-xs font-bold">
           <button onClick={() => props.onSetAdminTab("RESERVATIONS")} className={`px-4 py-2.5 rounded-lg transition-all border cursor-pointer ${props.adminTab === "RESERVATIONS" ? "bg-slate-900 text-white border-slate-900" : "bg-white text-slate-600 hover:text-slate-950 hover:bg-slate-50 border-slate-200"}`}>Reservations ({props.reservations.length})</button>
           {props.isOwner && <button onClick={() => props.onSetAdminTab("STATS")} className={`px-4 py-2.5 rounded-lg transition-all border cursor-pointer ${props.adminTab === "STATS" ? "bg-slate-900 text-white border-slate-900" : "bg-white text-slate-600 hover:text-slate-950 hover:bg-slate-50 border-slate-200"}`}>Revenue Dashboard</button>}
@@ -251,6 +308,7 @@ export default function BackOfficeView() {
       searchTerm={portal.searchTerm}
       statusFilter={portal.statusFilter}
       paymentFilter={portal.paymentFilter}
+      newBookingNotice={portal.newBookingNotice}
       editingRoomTypeId={portal.editingRoomTypeId}
       editingRate={portal.editingRate}
       editingDescription={portal.editingDescription}
@@ -268,6 +326,7 @@ export default function BackOfficeView() {
       onSearchTermChange={portal.setSearchTerm}
       onStatusFilterChange={portal.setStatusFilter}
       onPaymentFilterChange={portal.setPaymentFilter}
+      onDismissNewBookingNotice={() => portal.setNewBookingNotice(null)}
       onStatusChange={portal.handleStatusChange}
       onTogglePayment={portal.handleTogglePayment}
       onCancelReservation={portal.handleCancelReservation}

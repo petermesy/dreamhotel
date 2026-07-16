@@ -5,7 +5,7 @@ import {
   updateBookingDetailsSchema,
   submitReceiptSchema
 } from "./booking.schemas.js";
-import { sendBookingConfirmationEmail } from "./booking.mail.js";
+import { sendBookingAdminNotificationEmail, sendBookingConfirmationEmail } from "./booking.mail.js";
 import { ValidationError, NotFoundError, ConflictError, UnauthorizedError } from "../../core/errors.js";
 import { AuthenticatedRequest } from "../../core/middleware.js";
 
@@ -115,19 +115,32 @@ export async function createBooking(req: AuthenticatedRequest, res: Response) {
   });
 
   try {
-    await sendBookingConfirmationEmail({
-      id: booking.id,
-      fullName: booking.fullName,
-      email: booking.email,
-      roomTypeName: roomType.name,
-      roomNumber: availableRoom.roomNumber,
-      checkIn: booking.checkIn,
-      checkOut: booking.checkOut,
-      totalPrice: booking.totalPrice,
-      paymentStatus: booking.paymentStatus,
-    });
+    await Promise.allSettled([
+      sendBookingConfirmationEmail({
+        id: booking.id,
+        fullName: booking.fullName,
+        email: booking.email,
+        roomTypeName: roomType.name,
+        roomNumber: availableRoom.roomNumber,
+        checkIn: booking.checkIn,
+        checkOut: booking.checkOut,
+        totalPrice: booking.totalPrice,
+        paymentStatus: booking.paymentStatus,
+      }),
+      sendBookingAdminNotificationEmail({
+        id: booking.id,
+        fullName: booking.fullName,
+        email: booking.email,
+        roomTypeName: roomType.name,
+        roomNumber: availableRoom.roomNumber,
+        checkIn: booking.checkIn,
+        checkOut: booking.checkOut,
+        totalPrice: booking.totalPrice,
+        paymentStatus: booking.paymentStatus,
+      }),
+    ]);
   } catch (error) {
-    console.error("Failed to send booking confirmation email", error);
+    console.error("Failed to send booking notification emails", error);
   }
 
   res.status(201).json(booking);

@@ -18,6 +18,8 @@ export function useBackOfficePortal() {
   const [searchTerm, setSearchTerm] = React.useState("");
   const [statusFilter, setStatusFilter] = React.useState("");
   const [paymentFilter, setPaymentFilter] = React.useState("");
+  const [newBookingNotice, setNewBookingNotice] = React.useState<string | null>(null);
+  const previousReservationIdsRef = React.useRef<string[]>([]);
 
   const {
     email,
@@ -78,6 +80,34 @@ export function useBackOfficePortal() {
     if (adminTab === "ENQUIRIES") void fetchEnquiries();
   }, [adminTab, fetchEnquiries, fetchMyBookings, fetchReservations, fetchRooms, fetchStaff, fetchStats, isAuthenticated, paymentFilter, searchTerm, statusFilter, token, user]);
 
+  React.useEffect(() => {
+    if (!isAuthenticated || !token || !user || user.role === "USER") return;
+
+    const currentIds = admin.reservations.map((booking) => booking.id);
+    const previousIds = previousReservationIdsRef.current;
+
+    if (previousIds.length > 0) {
+      const newlySeen = admin.reservations.filter((booking) => !previousIds.includes(booking.id));
+      if (newlySeen.length > 0) {
+        const latest = newlySeen[0];
+        setNewBookingNotice(`${newlySeen.length} new booking${newlySeen.length > 1 ? "s" : ""} received${latest ? `: ${latest.fullName} (${latest.id})` : ""}`);
+      }
+    }
+
+    previousReservationIdsRef.current = currentIds;
+  }, [admin.reservations, isAuthenticated, token, user]);
+
+  React.useEffect(() => {
+    if (!isAuthenticated || !token || !user || user.role === "USER") return;
+    if (adminTab !== "RESERVATIONS") return;
+
+    const intervalId = window.setInterval(() => {
+      void fetchReservations(statusFilter, paymentFilter, searchTerm);
+    }, 10000);
+
+    return () => window.clearInterval(intervalId);
+  }, [adminTab, fetchReservations, isAuthenticated, paymentFilter, searchTerm, statusFilter, token, user]);
+
   return {
     admin,
     dispatch,
@@ -101,6 +131,7 @@ export function useBackOfficePortal() {
     searchTerm,
     statusFilter,
     paymentFilter,
+    newBookingNotice,
     newStaffEmail,
     newStaffName,
     newStaffPassword,
@@ -137,6 +168,7 @@ export function useBackOfficePortal() {
     setSearchTerm,
     setStatusFilter,
     setPaymentFilter,
+    setNewBookingNotice,
     setNewStaffEmail,
     setNewStaffName,
     setNewStaffPassword,
