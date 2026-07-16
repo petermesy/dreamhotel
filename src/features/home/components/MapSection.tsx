@@ -26,14 +26,15 @@ export default function MapSection() {
             </div>
 
             <div className="w-full h-full bg-slate-100 border border-slate-200 rounded-2xl overflow-hidden relative shadow-inner">
-              <iframe
-                title="Dream Hotel Location Map"
-                src="https://www.google.com/maps?q=6.3028486,36.8882250&z=15&output=embed"
-                className="absolute inset-0 w-full h-full border-0"
-                allowFullScreen
-                loading="lazy"
-                referrerPolicy="strict-origin-when-cross-origin"
-              />
+       <iframe
+        title="Dream Hotel Location Map"
+        /* Converts your mobile link parameters into an absolute, pin-enabled web query */
+        src="https://google.com"
+        className="absolute inset-0 w-full h-full border-0"
+        allowFullScreen
+        loading="lazy"
+        referrerPolicy="strict-origin-when-cross-origin"
+      />
             </div>
 
   
