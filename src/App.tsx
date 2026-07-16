@@ -14,6 +14,7 @@ import BookNowSection from "./features/booking/BookNowSection";
 import AdminPortal from "./features/admin/AdminPortal";
 import { Phone, Mail } from "lucide-react";
 import Footer from "./shared/components/layout/Footer";
+import TopHeader from "./shared/components/TopHeader";
 
 // The main application content inside the Redux Provider wrapper
 function AppContent() {
@@ -42,6 +43,7 @@ function AppContent() {
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col justify-between selection:bg-indigo-100 selection:text-indigo-900 font-sans">
       {/* 1. Header sits at the top of every page */}
+      <TopHeader/>
       <Header />
 
       {/* 2. Primary Page Body */}

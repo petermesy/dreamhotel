@@ -48,7 +48,7 @@ export default function BookingConfirmationCard({ bookingSuccess, onNewBooking }
             Book Another Room
           </button>
           <p className="text-[10px] text-slate-400">
-            Need assistance? Contact our front-desk immediately at +251 985 876 478
+            Need assistance? Contact our front-desk immediately at +251 91 176 8699
           </p>
         </div>
       </motion.div>

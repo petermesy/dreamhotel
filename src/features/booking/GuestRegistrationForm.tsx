@@ -282,8 +282,8 @@ export default function GuestRegistrationForm() {
               <AlertCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
               <div className="w-full space-y-3">
                 <div>
-                  <strong className="block text-amber-950 mb-1">CBE / TELEBIRR Receipt</strong>
-                  Paste the SMS text or receipt from your CBE bank transfer or Telebirr payment below, or attach a screenshot/receipt image for immediate front-desk confirmation. If no payment receipt is sent within 12 hours, the reservation will be automatically cancelled.
+                  <strong className="block text-amber-950 mb-1">CBE</strong>
+                  Paste the SMS text or receipt from your CBE bank transfer payment below, or attach a screenshot/receipt image for immediate front-desk confirmation. If no payment receipt is sent within 12 hours, the reservation will be automatically cancelled.
                 </div>
 
                 <div className="rounded-lg border border-amber-200 bg-white/80 p-3">
@@ -291,11 +291,9 @@ export default function GuestRegistrationForm() {
                   <div className="space-y-2 text-sm text-slate-700">
                     <div className="flex items-center justify-between gap-3 rounded-md bg-slate-50 px-2.5 py-2">
                       <span className="font-semibold text-slate-800">CBE</span>
-                      <span className="font-mono text-[12px]">1000 1234 5678</span>
+                      <span className="font-mono text-[12px]">1000-0886-8025-8</span>
                     </div>
-                    <div className="flex items-center justify-between gap-3 rounded-md bg-slate-50 px-2.5 py-2">
-                      <span className="font-semibold text-slate-800">Telebirr</span>
-                    </div>
+           
                   </div>
                 </div>
 

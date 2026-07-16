@@ -71,14 +71,14 @@ export default function ContactPage() {
           <ContactChannelCard
             icon="phone"
             title="Direct Hotlines"
-            line1={<span>Mobile: <a href="tel:+251985876478" className="text-indigo-600 hover:underline font-bold">+251 985 876 478</a></span>}
+            line1={<span>Mobile: <a href="tel:+251985876478" className="text-indigo-600 hover:underline font-bold">+251 91 176 8699</a></span>}
             line2={<span>Our front-desk receptionists are active 24 hours a day, 7 days a week, supporting midnight check-ins, local transport coordinators, and immediate guest queries.</span>}
             delay={0.1}
           />
           <ContactChannelCard
             icon="mail"
             title="Digital Correspondence"
-            line1={<span>General: <a href="mailto:dreamhotel@gmail.com" className="text-indigo-600 hover:underline font-bold">dreamhotel@gmail.com</a></span>}
+            line1={<span>General: <a href="mailto:reservations@dreamhotelsawla.com" className="text-indigo-600 hover:underline font-bold">reservations@dreamhotelsawla.com</a></span>}
             line2={<span>Submit corporate lodging requests, conference room bookings, NGO seminar plans, or special group dining menus directly to our billing department.</span>}
             delay={0.2}
           />

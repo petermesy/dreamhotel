@@ -71,14 +71,13 @@ export default function MapSection() {
                 </div>
                 <div className="flex justify-between border-b border-slate-300/60 pb-2.5">
                   <span className="font-bold text-slate-950">Direct Booking:</span>
-                  <span>Offline Cash Ledger Only</span>
                 </div>
               </div>
             </div>
             <div className="mt-8 border-t border-slate-300/60 pt-6 space-y-3 font-mono text-xs text-slate-700">
               <div className="flex items-center gap-2">
                 <Phone className="w-4 h-4 text-slate-900" />
-                <span>+251 985 876 478</span>
+                <span>+251 91 176 8699</span>
               </div>
               <div className="flex items-center gap-2">
                 <Mail className="w-4 h-4 text-slate-900" />

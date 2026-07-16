@@ -36,7 +36,7 @@ export default function VenueEnquiryForm({
         </p>
         <div className="flex items-center gap-2 text-xs font-mono bg-indigo-50 text-indigo-955 p-4 rounded-xl border border-indigo-100">
           <Mail className="w-5 h-5 text-indigo-600 shrink-0" />
-          <span>Forms submit directly to: <strong>dreamhotel@gmail.com</strong></span>
+          <span>Forms submit directly to: <strong>reservations@dreamhotelsawla.com</strong></span>
         </div>
       </div>
 

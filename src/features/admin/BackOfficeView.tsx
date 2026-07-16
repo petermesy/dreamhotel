@@ -178,12 +178,22 @@ function ReservationsTab(props: BackOfficeProps) {
 
     return (
       <div className="space-y-2">
-        <button
-          onClick={() => props.onTogglePayment(booking.id, booking.paymentStatus)}
-          className={`px-2.5 py-1 rounded text-[10px] font-bold border transition-all cursor-pointer ${booking.paymentStatus === "RECEIVED" ? "bg-emerald-50 text-emerald-700 border-emerald-200" : "bg-indigo-50 text-indigo-700 border-indigo-200 hover:bg-indigo-100"}`}
-        >
-          {booking.paymentStatus}
-        </button>
+        <div className="flex flex-wrap items-center gap-2">
+          <div
+            className={`px-2.5 py-1 rounded text-[10px] font-bold border transition-all ${booking.paymentStatus === "RECEIVED" ? "bg-emerald-50 text-emerald-700 border-emerald-200" : "bg-indigo-50 text-indigo-700 border-indigo-200"}`}
+          >
+            {booking.paymentStatus}
+          </div>
+          {booking.paymentStatus !== "RECEIVED" && (
+            <button
+              type="button"
+              onClick={() => props.onTogglePayment(booking.id, booking.paymentStatus)}
+              className="rounded border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-[10px] font-bold text-emerald-700 transition hover:bg-emerald-100"
+            >
+              Approve Payment
+            </button>
+          )}
+        </div>
         {booking.paymentMessage ? (
           <div className="rounded-md border border-amber-200 bg-amber-50 p-2 text-[10px] text-amber-800">
             <div className="font-bold uppercase tracking-wide mb-1">Receipt</div>
