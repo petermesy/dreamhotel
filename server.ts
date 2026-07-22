@@ -2,7 +2,6 @@ import express from "express";
 import path from "path";
 import fs from "fs";
 import apiRouter from "./backend/routes.js";
-import { createServer as createViteServer } from "vite";
 import "dotenv/config";
 
 const app = express();
@@ -25,6 +24,7 @@ async function startServer() {
   if (process.env.BACKEND_ONLY === "true") {
     console.log("Running in BACKEND_ONLY mode. Frontend static/Vite assets are skipped.");
   } else if (process.env.NODE_ENV !== "production") {
+    const { createServer: createViteServer } = await import("vite");
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: "spa",
