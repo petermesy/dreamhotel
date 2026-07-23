@@ -1,5 +1,6 @@
 import nodemailer from "nodemailer";
 import "dotenv/config";
+import { createPaymentVerifiedEmail } from "./email.templates.js";
 
 interface BookingEmailPayload {
   id: string;
@@ -76,9 +77,9 @@ export async function sendBookingConfirmationEmail(booking: BookingEmailPayload)
 
   const html = `
     <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #0f172a;">
-      <h2 style="color: #4338ca;">Dream Hotel Reservation Confirmation</h2>
+      <h2 style="color: #4338ca;">Dream Hotel Booking Created</h2>
       <p>Hello ${booking.fullName},</p>
-      <p>Your reservation request has been received and confirmed.</p>
+      <p>Your booking has been created successfully.</p>
       <ul>
         <li><strong>Reference:</strong> ${booking.id}</li>
         <li><strong>Room:</strong> ${roomNumber}</li>
@@ -87,7 +88,7 @@ export async function sendBookingConfirmationEmail(booking: BookingEmailPayload)
         <li><strong>Check-out:</strong> ${formatDate(booking.checkOut)}</li>
         <li><strong>Estimated Quote:</strong> ETB ${booking.totalPrice.toLocaleString()}</li>
       </ul>
-      <p>You will be notified soon when your payment is approved.</p>
+      <p>Your booking is currently waiting for payment confirmation. Please keep your booking reference for future communication.</p>
       <p>Thank you for choosing Dream Hotel.</p>
       <p style="font-size: 12px; color: #64748b;">Sent from reservations@dreamhotelsawla.com</p>
     </div>
@@ -96,9 +97,9 @@ export async function sendBookingConfirmationEmail(booking: BookingEmailPayload)
   await transporter.sendMail({
     from: fromAddress,
     to: toEmail,
-    subject: `Dream Hotel Reservation Confirmation - ${booking.id}`,
+    subject: `Dream Hotel Booking Created - ${booking.id}`,
     html,
-    text: `Hello ${booking.fullName},\n\nYour reservation request has been received and confirmed.\nReference: ${booking.id}\nRoom: ${roomNumber}\nRoom Type: ${roomTypeName}\nCheck-in: ${formatDate(booking.checkIn)}\nCheck-out: ${formatDate(booking.checkOut)}\nEstimated Quote: ETB ${booking.totalPrice.toLocaleString()}\n\nYou will be notified soon when your payment is approved.\n\nThank you for choosing Dream Hotel.`,
+    text: `Hello ${booking.fullName},\n\nYour booking has been created successfully.\nReference: ${booking.id}\nRoom: ${roomNumber}\nRoom Type: ${roomTypeName}\nCheck-in: ${formatDate(booking.checkIn)}\nCheck-out: ${formatDate(booking.checkOut)}\nEstimated Quote: ETB ${booking.totalPrice.toLocaleString()}\n\nYour booking is currently waiting for payment confirmation. Please keep your booking reference for future communication.\n\nThank you for choosing Dream Hotel.`,
   });
 }
 
@@ -114,31 +115,22 @@ export async function sendPaymentApprovedEmail(booking: BookingEmailPayload) {
 
   const roomTypeName = booking.roomTypeName || booking.roomType?.name || "Selected room";
   const roomNumber = booking.roomNumber || booking.room?.roomNumber || "TBD";
-
-  const html = `
-    <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #0f172a;">
-      <h2 style="color: #15803d;">Payment Approved</h2>
-      <p>Hello ${booking.fullName},</p>
-      <p>Your payment has been approved. Your reservation is now confirmed.</p>
-      <ul>
-        <li><strong>Reference:</strong> ${booking.id}</li>
-        <li><strong>Room:</strong> ${roomNumber}</li>
-        <li><strong>Room Type:</strong> ${roomTypeName}</li>
-        <li><strong>Check-in:</strong> ${formatDate(booking.checkIn)}</li>
-        <li><strong>Check-out:</strong> ${formatDate(booking.checkOut)}</li>
-        <li><strong>Estimated Quote:</strong> ETB ${booking.totalPrice.toLocaleString()}</li>
-      </ul>
-      <p>Please keep this reference for check-in.</p>
-      <p>Thank you for choosing Dream Hotel.</p>
-    </div>
-  `;
+  const email = createPaymentVerifiedEmail({
+    fullName: booking.fullName,
+    bookingId: booking.id,
+    roomTypeName,
+    roomNumber,
+    checkIn: formatDate(booking.checkIn),
+    checkOut: formatDate(booking.checkOut),
+    totalPrice: booking.totalPrice.toLocaleString(),
+  });
 
   await transporter.sendMail({
     from: fromAddress,
     to: toEmail,
-    subject: `Payment Approved - ${booking.id}`,
-    html,
-    text: `Hello ${booking.fullName},\n\nYour payment has been approved. Your reservation is now confirmed.\nReference: ${booking.id}\nRoom: ${roomNumber}\nRoom Type: ${roomTypeName}\nCheck-in: ${formatDate(booking.checkIn)}\nCheck-out: ${formatDate(booking.checkOut)}\nEstimated Quote: ETB ${booking.totalPrice.toLocaleString()}\n\nPlease keep this reference for check-in.\n\nThank you for choosing Dream Hotel.`,
+    subject: email.subject,
+    html: email.html,
+    text: email.text,
   });
 }
 

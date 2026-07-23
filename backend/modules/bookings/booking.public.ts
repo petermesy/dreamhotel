@@ -5,7 +5,7 @@ import {
   updateBookingDetailsSchema,
   submitReceiptSchema
 } from "./booking.schemas.js";
-import { sendBookingAdminNotificationEmail, sendBookingConfirmationEmail } from "./booking.mail.js";
+import { sendBookingAdminNotificationEmail } from "./booking.mail.js";
 import { ValidationError, NotFoundError, ConflictError, UnauthorizedError } from "../../core/errors.js";
 import { AuthenticatedRequest } from "../../core/middleware.js";
 
@@ -29,8 +29,12 @@ async function autoCancelIfExpired(booking: any) {
 
 export async function createBooking(req: AuthenticatedRequest, res: Response) {
   const result = createBookingSchema.safeParse(req.body);
+
   if (!result.success) {
-    throw new ValidationError("Missing or invalid booking fields", result.error.flatten().fieldErrors);
+    throw new ValidationError(
+      "Missing or invalid booking fields",
+      result.error.flatten().fieldErrors
+    );
   }
 
   const {
@@ -47,103 +51,128 @@ export async function createBooking(req: AuthenticatedRequest, res: Response) {
     userId
   } = result.data;
 
+
   const authenticatedUser = req.user;
   const resolvedUserId = userId ?? authenticatedUser?.id ?? null;
+
 
   const start = new Date(checkIn);
   const end = new Date(checkOut);
 
-  if (isNaN(start.getTime()) || isNaN(end.getTime()) || start >= end) {
-    throw new ValidationError("Check-out date must be after check-in date");
+
+  if (
+    isNaN(start.getTime()) ||
+    isNaN(end.getTime()) ||
+    start >= end
+  ) {
+    throw new ValidationError(
+      "Check-out date must be after check-in date"
+    );
   }
 
-  const roomType = await prisma.roomType.findUnique({ where: { id: roomTypeId } });
-  if (!roomType) {
-    throw new NotFoundError("Selected room type not found");
-  }
 
-  const overlappingBookings = await prisma.booking.findMany({
-    where: {
-      status: { in: ["BOOKED", "CHECKED_IN"] },
-      OR: [
-        { checkIn: { lt: end }, checkOut: { gt: start } }
-      ]
-    },
-    select: { roomNumber: true }
-  });
-
-  const bookedRoomNumbers = overlappingBookings
-    .map(b => b.roomNumber)
-    .filter((n): n is string => !!n);
-
-  const availableRoom = await prisma.room.findFirst({
-    where: {
-      roomTypeId,
-      status: "AVAILABLE",
-      roomNumber: { notIn: bookedRoomNumbers }
+  const roomType = await prisma.roomType.findUnique({
+    where:{
+      id:roomTypeId
     }
   });
 
-  if (!availableRoom) {
-    throw new ConflictError("No rooms of this type are available for the selected dates.");
+
+  if(!roomType){
+    throw new NotFoundError(
+      "Selected room type not found"
+    );
   }
 
-  const nights = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+
+  // Only check availability, do not reserve room yet
+  const availableRoom = await prisma.room.findFirst({
+    where:{
+      roomTypeId,
+      status:"AVAILABLE"
+    }
+  });
+
+
+  if(!availableRoom){
+    throw new ConflictError(
+      "No rooms available for this room type"
+    );
+  }
+
+
+
+  const nights = Math.ceil(
+    (end.getTime()-start.getTime()) /
+    (1000*60*60*24)
+  );
+
+
   const totalPrice = nights * roomType.rate;
-  const refCode = `DP-${Math.floor(10000 + Math.random() * 90000)}`;
+
+
+  const refCode =
+    `DP-${Math.floor(10000 + Math.random()*90000)}`;
+
+
 
   const booking = await prisma.booking.create({
-    data: {
-      id: refCode,
+
+    data:{
+
+      id:refCode,
+
       fullName,
       email,
       purpose,
       address,
       nationalId,
+
       roomTypeId,
-      roomNumber: availableRoom.roomNumber,
-      checkIn: start,
-      checkOut: end,
+
+      // IMPORTANT
+      // Do not assign room before payment
+      roomNumber:null,
+
+
+      checkIn:start,
+      checkOut:end,
+
       phone,
-      status: "BOOKED",
-      paymentStatus: "PENDING",
+
+
+      // IMPORTANT
+      status:"PENDING_PAYMENT",
+
+      paymentStatus:"PENDING",
+
+
       totalPrice,
-      paymentMessage: paymentMessage || null,
-      userId: resolvedUserId,
+
+
+      paymentMessage:
+        paymentMessage || null,
+
+
+      userId:
+        resolvedUserId
+
     },
-    include: { roomType: true, room: true }
+
+
+    include:{
+      roomType:true
+    }
+
   });
 
-  try {
-    await Promise.allSettled([
-      sendBookingConfirmationEmail({
-        id: booking.id,
-        fullName: booking.fullName,
-        email: booking.email,
-        roomTypeName: roomType.name,
-        roomNumber: availableRoom.roomNumber,
-        checkIn: booking.checkIn,
-        checkOut: booking.checkOut,
-        totalPrice: booking.totalPrice,
-        paymentStatus: booking.paymentStatus,
-      }),
-      sendBookingAdminNotificationEmail({
-        id: booking.id,
-        fullName: booking.fullName,
-        email: booking.email,
-        roomTypeName: roomType.name,
-        roomNumber: availableRoom.roomNumber,
-        checkIn: booking.checkIn,
-        checkOut: booking.checkOut,
-        totalPrice: booking.totalPrice,
-        paymentStatus: booking.paymentStatus,
-      }),
-    ]);
-  } catch (error) {
-    console.error("Failed to send booking notification emails", error);
-  }
 
-  res.status(201).json(booking);
+
+  res.status(201).json({
+    success:true,
+    booking
+  });
+
 }
 
 export async function getBookingLookup(req: AuthenticatedRequest, res: Response) {

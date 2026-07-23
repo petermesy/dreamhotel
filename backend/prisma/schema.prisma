@@ -44,30 +44,41 @@ model Room {
 }
 
 model Booking {
-  id             String     @id // Reference code e.g. "DP-10492"
+  id             String     @id
   fullName       String
   purpose        String
   address        String
   nationalId     String
   roomNumber     String?
   room           Room?      @relation(fields: [roomNumber], references: [roomNumber], onDelete: SetNull)
+
   roomTypeId     String
   roomType       RoomType   @relation(fields: [roomTypeId], references: [id], onDelete: Cascade)
+
   checkIn        DateTime
   checkOut       DateTime
   phone          String
   email          String?
-  status         String     @default("BOOKED") // "BOOKED", "CHECKED_IN", "CHECKED_OUT", "CANCELLED"
-  paymentStatus  String     @default("PENDING") // "PENDING", "RECEIVED"
+
+  // Booking lifecycle
+  status         String     @default("PENDING_PAYMENT")
+  // PENDING_PAYMENT, BOOKED, CHECKED_IN, CHECKED_OUT, CANCELLED
+
+  // Payment lifecycle
+  paymentStatus  String     @default("PENDING")
+  // PENDING, RECEIVED, FAILED
+
   totalPrice     Float
-  paymentMessage String?    @db.Text // Copy-pasted bank transfer message (CBE / Telebirr)
+  paymentMessage String?    @db.Text
+
   userId         Int?
   user           User?      @relation(fields: [userId], references: [id], onDelete: SetNull)
+
   createdAt      DateTime   @default(now())
   updatedAt      DateTime   @updatedAt
+
   auditLogs      AuditLog[]
 }
-
 model AuditLog {
   id        Int      @id @default(autoincrement())
   bookingId String?
@@ -105,7 +116,7 @@ model GalleryImage {
 model Transaction {
   id          Int @id @default(autoincrement())
   txRef       String @unique @map("tx_ref")
-  bookingId   Int? @map("booking_id")
+  bookingId   String? @map("booking_id")
   status      String
   amount    Float
   currency  String   @default("ETB")

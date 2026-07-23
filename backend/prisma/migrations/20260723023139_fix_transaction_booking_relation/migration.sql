@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE `Booking` MODIFY `status` VARCHAR(191) NOT NULL DEFAULT 'PENDING_PAYMENT';
+
+-- AlterTable
+ALTER TABLE `transactions` ALTER COLUMN `status` DROP DEFAULT;

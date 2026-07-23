@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import axios from "axios";
-
+import { confirmBookingPayment } from "../bookings/booking.payment.js";
+import { sendPaymentApprovedEmail } from "../bookings/booking.mail.js";
 const prisma = new PrismaClient();
 
 const CHAPA_URL = "https://api.chapa.co/v1";
@@ -10,6 +11,37 @@ console.log({
   BACKEND_URL: process.env.BACKEND_URL,
   FRONTEND_URL: process.env.FRONTEND_URL,
 });
+
+async function confirmPaymentAndNotify(bookingId: string) {
+  const bookingBeforeConfirmation = await prisma.booking.findUnique({
+    where: { id: bookingId },
+    select: { paymentStatus: true },
+  });
+
+  const booking = await confirmBookingPayment(bookingId);
+
+  if (bookingBeforeConfirmation?.paymentStatus !== "RECEIVED") {
+    try {
+      await sendPaymentApprovedEmail({
+        id: booking.id,
+        fullName: booking.fullName,
+        email: booking.email,
+        roomTypeName: booking.roomType?.name,
+        roomNumber: booking.roomNumber,
+        checkIn: booking.checkIn,
+        checkOut: booking.checkOut,
+        totalPrice: booking.totalPrice,
+        paymentStatus: booking.paymentStatus,
+        roomType: booking.roomType,
+      });
+    } catch (error) {
+      console.error("Failed to send payment approval email", error);
+    }
+  }
+
+  return booking;
+}
+
 export const initializePayment = async (req: Request, res: Response) => {
   try {
     const {
@@ -31,15 +63,19 @@ export const initializePayment = async (req: Request, res: Response) => {
     const txRef = `BOOK-${bookingId}-${Date.now()}`;
 
     // Save transaction
-    await prisma.transaction.create({
-      data: {
-        txRef,
-        amount: Number(amount),
-        email,
-        bookingId: Number(bookingId),
-        status: "pending",
-      },
-    });
+await prisma.transaction.create({
+  data: {
+    txRef,
+    amount: Number(amount),
+    email,
+
+    // IMPORTANT
+    // Booking.id is String
+    bookingId: bookingId,
+
+    status: "pending",
+  },
+});
 
     const chapaResponse = await axios.post(
       `${CHAPA_URL}/transaction/initialize`,
@@ -114,25 +150,25 @@ export const verifyPayment = async (req: Request, res: Response) => {
       chapaResponse.data.status === "success" &&
       payment.status === "success"
     ) {
-      const transaction = await prisma.transaction.update({
-        where: {
-          txRef,
-        },
-        data: {
-          status: "completed",
-        },
-      });
 
-      if (transaction.bookingId) {
-        await prisma.booking.update({
-          where: {
-            id: transaction.bookingId,
-          },
-          data: {
-            status: "confirmed",
-          },
-        });
-      }
+     const transaction = await prisma.transaction.update({
+  where: {
+    txRef,
+  },
+  data: {
+    status: "completed",
+  },
+});
+
+
+if (transaction.bookingId) {
+
+  await confirmPaymentAndNotify(String(transaction.bookingId));
+
+}
+
+
+      
 
       return res.json({
         success: true,
@@ -212,17 +248,11 @@ export const chapaWebhook = async (req: Request, res: Response) => {
         },
       });
 
+if (tx.bookingId) {
 
-      if (tx.bookingId) {
-        await prisma.booking.update({
-          where: {
-            id: tx.bookingId,
-          },
-          data: {
-            status: "confirmed",
-          },
-        });
-      }
+  await confirmPaymentAndNotify(String(tx.bookingId));
+
+}
 
     }
 

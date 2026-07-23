@@ -47,11 +47,17 @@ export async function updateReservationStatus(req: AuthenticatedRequest, res: Re
     throw new NotFoundError("Booking not found");
   }
 
-  const updated = await prisma.booking.update({
-    where: { id },
-    data: { status },
-    include: { roomType: true, room: true }
-  });
+const updated = await prisma.booking.update({
+  where: { id },
+  data: {
+    paymentStatus,
+
+    ...(paymentStatus === "RECEIVED" && {
+      status: "BOOKED"
+    })
+  },
+  include: { roomType: true, room: true }
+});
 
   res.json(updated);
 }
