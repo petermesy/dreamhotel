@@ -5,6 +5,7 @@ import { fileURLToPath } from "url";
 import "dotenv/config";
 import apiRouter from "./routes.js";
 import cors from "cors";
+import paymentRoutes from "./modules/payment/payment.routes.js"
 const app = express();
 
 const port = process.env.PORT || 5000;
@@ -35,7 +36,7 @@ app.use("/uploads", express.static(uploadsDir));
 
 // API routes
 app.use("/api", apiRouter);
-
+app.use('/api/payments', paymentRoutes);
 // Health check
 app.get("/", (_req, res) => {
   res.json({

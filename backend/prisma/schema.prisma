@@ -8,7 +8,6 @@ generator client {
   binaryTargets = ["native", "debian-openssl-3.0.x", "rhel-openssl-3.0.x"]
 }
 
-
 model User {
   id        Int        @id @default(autoincrement())
   email     String     @unique
@@ -101,4 +100,18 @@ model GalleryImage {
   description String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model Transaction {
+  id          Int @id @default(autoincrement())
+  txRef       String @unique @map("tx_ref")
+  bookingId   Int? @map("booking_id")
+  status      String
+  amount    Float
+  currency  String   @default("ETB")
+  email     String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("transactions")
 }
