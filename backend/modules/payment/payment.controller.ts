@@ -7,10 +7,7 @@ const prisma = new PrismaClient();
 
 const CHAPA_URL = "https://api.chapa.co/v1";
 const SECRET_KEY = process.env.CHAPA_SECRET_KEY!;
-console.log({
-  BACKEND_URL: process.env.BACKEND_URL,
-  FRONTEND_URL: process.env.FRONTEND_URL,
-});
+
 
 async function confirmPaymentAndNotify(bookingId: string) {
   const bookingBeforeConfirmation = await prisma.booking.findUnique({
